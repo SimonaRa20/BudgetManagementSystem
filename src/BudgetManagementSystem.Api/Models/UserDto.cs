@@ -9,5 +9,13 @@
         public string? Role { get; set; }
         public string? Email { get; set; }
         public string? HashedPassword { get; set; }
+
+        // Foreign key to represent the family the user belongs to
+        public int FamilyId { get; set; }
+        public FamilyDto Family { get; set; }
+
+        // Navigation properties for user's incomes and expenses
+        public ICollection<IncomeDto> Incomes { get; set; }
+        public ICollection<ExpenseDto> Expenses { get; set; }
     }
 }
