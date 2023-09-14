@@ -23,7 +23,6 @@ namespace BudgetManagementSystem.Api.Controllers
             _dbContext = dbContext;
         }
 
-        [AllowAnonymous]
         [Route("Login")]
         [HttpPost]
         public ActionResult Login([FromBody] UserLoginRequest userLogin)
@@ -37,6 +36,59 @@ namespace BudgetManagementSystem.Api.Controllers
             }
 
             return NotFound("User not found. Chech inserted data");
+        }
+
+        [Route("Register")]
+        [HttpPost]
+        public async Task<IActionResult> Register(UserRegisterRequest user)
+        {
+            List<string> errors = new List<string>();
+
+            if (user.Email.IsNullOrEmpty() || !user.Email.Contains('@'))
+            {
+                errors.Add("Invalid email format.");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Name))
+            {
+                errors.Add("User name is necessary.");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Surname))
+            {
+                errors.Add("User surname is necessary.");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Password) || user.Password.Length < 8)
+            {
+                errors.Add("Password should be a minimum of 8 characters.");
+            }
+
+            if (_dbContext.Users.Any(u => u.Email == user.Email))
+            {
+                errors.Add("User with the same email already exists.");
+            }
+
+            if (errors.Count > 0)
+            {
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                var hashedPassword = HashPassword(user.Password);
+                user.Password = hashedPassword;
+
+                UserDto userDto = ConvertUser(user);
+                _dbContext.Users.Add(userDto);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occurred while processing the request.");
+            }
         }
 
         private UserLoginResponse LoginResponse(UserDto user, string token)
@@ -78,49 +130,20 @@ namespace BudgetManagementSystem.Api.Controllers
             return null;
         }
 
-        [Route("Register")]
-        [HttpPost]
-        public async Task<IActionResult> Register(UserDto user)
+        private UserDto ConvertUser(UserRegisterRequest user)
         {
-            try
+            UserDto userDto = new UserDto
             {
-                if (user.Email.IsNullOrEmpty() || !user.Email.Contains('@'))
-                {
-                    return BadRequest("Invalid email format.");
-                }
+                Id = 0,
+                Name = user.Name,
+                Surname = user.Surname,
+                UserName = user.UserName,
+                Role = "Admin",
+                Email = user.Email,
+                HashedPassword = user.Password
+            };
 
-                if (string.IsNullOrWhiteSpace(user.Name))
-                {
-                    return BadRequest("User name is necessary.");
-                }
-
-                if (string.IsNullOrWhiteSpace(user.Surname))
-                {
-                    return BadRequest("User surname is necessary.");
-                }
-
-                if (string.IsNullOrWhiteSpace(user.HashedPassword) || user.HashedPassword.Length < 8)
-                {
-                    return BadRequest("Password should be a minimum of 8 characters.");
-                }
-
-                if (_dbContext.Users.Any(u => u.Email == user.Email))
-                {
-                    return BadRequest("User with the same email already exists.");
-                }
-
-                var hashedPassword = HashPassword(user.HashedPassword);
-                user.HashedPassword = hashedPassword;
-
-                _dbContext.Users.Add(user);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Data);
-            }
+            return userDto;
         }
 
         private bool VerifyPassword(string enteredPassword, string storedHashedPassword)
