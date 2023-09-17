@@ -1,4 +1,6 @@
-﻿namespace BudgetManagementSystem.Api.Models
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace BudgetManagementSystem.Api.Models
 {
     public class UserDto
     {
@@ -15,7 +17,7 @@
         public FamilyDto? Family { get; set; }
 
         // Navigation properties for user's incomes and expenses
-        public ICollection<IncomeDto> Incomes { get; set; }
-        public ICollection<ExpenseDto> Expenses { get; set; }
+        public ICollection<IncomeDto>? Incomes { get; set; }
+        public ICollection<ExpenseDto>? Expenses { get; set; }
     }
 }
