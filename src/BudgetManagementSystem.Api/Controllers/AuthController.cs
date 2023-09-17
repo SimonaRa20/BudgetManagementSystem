@@ -140,7 +140,8 @@ namespace BudgetManagementSystem.Api.Controllers
                 UserName = user.UserName,
                 Role = "Admin",
                 Email = user.Email,
-                HashedPassword = user.Password
+                HashedPassword = user.Password,
+                FamilyId = null,
             };
 
             return userDto;

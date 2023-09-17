@@ -4,6 +4,7 @@ using BudgetManagementSystem.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetManagementSystem.Api.Migrations
 {
     [DbContext(typeof(BudgetManagementSystemDbContext))]
-    partial class BudgetManagementSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230917143036_UpdateUserDtoFamilyId")]
+    partial class UpdateUserDtoFamilyId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
