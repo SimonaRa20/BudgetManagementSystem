@@ -7,11 +7,11 @@ namespace BudgetManagementSystem.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FamilyController : Controller
+    public class FamiliesController : Controller
     {
         private readonly BudgetManagementSystemDbContext _dbContext;
 
-        public FamilyController(BudgetManagementSystemDbContext dbContext)
+        public FamiliesController(BudgetManagementSystemDbContext dbContext)
         {
             _dbContext = dbContext;
         }
