@@ -21,26 +21,33 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                // Check if the family with the specified ID exists
                 var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                // Check if the user with the specified ID exists
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                // Retrieve incomes associated with the user
                 var incomes = await _dbContext.Incomes
                     .Where(i => i.UserId == userId)
                     .ToListAsync();
 
-                return Ok(incomes);
+                var incomeResponses = incomes.Select(i => new IncomeResponse
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Category = i.Category,
+                    Amount = i.Amount,
+                    Description = i.Description,
+                    Time = i.Time
+                }).ToList();
+
+                return Ok(incomeResponses);
             }
             catch (Exception ex)
             {
@@ -53,21 +60,18 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                // Check if the family with the specified ID exists
                 var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                // Check if the user with the specified ID exists
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                // Create a new income
                 var income = new IncomeDto
                 {
                     Title = incomeRequest.Title,
@@ -81,7 +85,17 @@ namespace BudgetManagementSystem.Api.Controllers
                 _dbContext.Incomes.Add(income);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(income);
+                var incomeResponse = new IncomeResponse
+                {
+                    Id = income.Id,
+                    Title = income.Title,
+                    Category = income.Category,
+                    Amount = income.Amount,
+                    Description = income.Description,
+                    Time = income.Time
+                };
+
+                return Ok(incomeResponse);
             }
             catch (Exception ex)
             {
@@ -94,34 +108,42 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                // Check if the family with the specified ID exists
                 var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                // Check if the user with the specified ID exists
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                // Retrieve the income by ID and ensure it belongs to the user
                 var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == userId);
                 if (income == null)
                 {
                     return NotFound("Income not found.");
                 }
 
-                return Ok(income);
+                var incomeResponse = new IncomeResponse
+                {
+                    Id = income.Id,
+                    Title = income.Title,
+                    Category = income.Category,
+                    Amount = income.Amount,
+                    Description = income.Description,
+                    Time = income.Time
+                };
+
+                return Ok(incomeResponse);
             }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while fetching the income: {ex.Message}");
             }
         }
+
 
     }
 }

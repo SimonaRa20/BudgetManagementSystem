@@ -37,7 +37,17 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Where(i => i.UserId == userId)
                     .ToListAsync();
 
-                return Ok(expenses);
+                var expenseResponses = expenses.Select(i => new ExpenseResponse
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Category = i.Category,
+                    Amount = i.Amount,
+                    Description = i.Description,
+                    Time = i.Time
+                }).ToList();
+
+                return Ok(expenseResponses);
             }
             catch (Exception ex)
             {
@@ -62,7 +72,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found.");
                 }
 
-                var income = new ExpenseDto
+                var expense = new ExpenseDto
                 {
                     Title = expenseRequest.Title,
                     Category = expenseRequest.Category,
@@ -72,10 +82,20 @@ namespace BudgetManagementSystem.Api.Controllers
                     UserId = userId,
                 };
 
-                _dbContext.Expenses.Add(income);
+                _dbContext.Expenses.Add(expense);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(income);
+                var expenseResponses = new ExpenseResponse
+                {
+                    Id = expense.Id,
+                    Title = expense.Title,
+                    Category = expense.Category,
+                    Amount = expense.Amount,
+                    Description = expense.Description,
+                    Time = expense.Time
+                };
+
+                return Ok(expenseResponses);
             }
             catch (Exception ex)
             {
@@ -83,7 +103,7 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-        [HttpGet("{incomeId}")]
+        [HttpGet("{expenseId}")]
         public async Task<IActionResult> GetExpenseById(int familyId, int userId, int expenseId)
         {
             try
@@ -106,7 +126,17 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Expense not found.");
                 }
 
-                return Ok(expense);
+                var expenseResponse = new ExpenseResponse
+                {
+                    Id = expense.Id,
+                    Title = expense.Title,
+                    Category = expense.Category,
+                    Amount = expense.Amount,
+                    Description = expense.Description,
+                    Time = expense.Time
+                };
+
+                return Ok(expenseResponse);
             }
             catch (Exception ex)
             {

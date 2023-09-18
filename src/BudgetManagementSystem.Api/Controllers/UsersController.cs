@@ -31,7 +31,6 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                // Retrieve the users belonging to the family
                 var users = family.FamilyMembers.ToList();
 
                 if (users == null || !users.Any())
@@ -39,7 +38,16 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("No users found for this family.");
                 }
 
-                return Ok(users);
+                var userUpdates = users.Select(u => new UserUpdate
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    UserName = u.UserName,
+                    Email = u.Email
+                }).ToList();
+
+                return Ok(userUpdates);
             }
             catch (Exception ex)
             {
