@@ -8,17 +8,17 @@ namespace BudgetManagementSystem.Api.Controllers
 {
     [Route("api/Families/{familyId}/[controller]")]
     [ApiController]
-    public class UsersController : Controller
+    public class MembersController : Controller
     {
         private readonly BudgetManagementSystemDbContext _dbContext;
 
-        public UsersController(BudgetManagementSystemDbContext dbContext)
+        public MembersController(BudgetManagementSystemDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsersByFamilyId(int familyId)
+        public async Task<IActionResult> GetMembersByFamilyId(int familyId)
         {
             try
             {
@@ -31,14 +31,14 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var users = family.FamilyMembers.ToList();
+                var members = family.FamilyMembers.ToList();
 
-                if (users == null || !users.Any())
+                if (members == null || !members.Any())
                 {
-                    return NotFound("No users found for this family.");
+                    return NotFound("No members found for this family.");
                 }
 
-                var userUpdates = users.Select(u => new UserUpdate
+                var userUpdates = members.Select(u => new UserUpdate
                 {
                     Id = u.Id,
                     Name = u.Name,

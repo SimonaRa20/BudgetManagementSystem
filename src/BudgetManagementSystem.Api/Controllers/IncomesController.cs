@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
-    [Route("api/Families/{familyId}/Users/{userId}/[controller]")]
+    [Route("api/Families/{familyId}/Members/{memberId}/[controller]")]
     [ApiController]
     public class IncomesController : Controller
     {
