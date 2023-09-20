@@ -1,4 +1,4 @@
-﻿namespace BudgetManagementSystem.Api.Models
+﻿namespace BudgetManagementSystem.Api.Contracts.Auth
 {
     public class UserLoginRequest
     {

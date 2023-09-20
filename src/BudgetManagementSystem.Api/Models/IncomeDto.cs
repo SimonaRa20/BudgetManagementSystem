@@ -1,4 +1,6 @@
-﻿namespace BudgetManagementSystem.Api.Models
+﻿using BudgetManagementSystem.Api.Constants;
+
+namespace BudgetManagementSystem.Api.Models
 {
     public class IncomeDto
     {
