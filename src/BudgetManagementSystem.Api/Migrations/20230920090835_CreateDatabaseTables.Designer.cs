@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetManagementSystem.Api.Migrations
 {
     [DbContext(typeof(BudgetManagementSystemDbContext))]
-    [Migration("20230917142220_FixUserTable")]
-    partial class FixUserTable
+    [Migration("20230920090835_CreateDatabaseTables")]
+    partial class CreateDatabaseTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,7 +120,6 @@ namespace BudgetManagementSystem.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("FamilyId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("HashedPassword")
@@ -171,9 +170,7 @@ namespace BudgetManagementSystem.Api.Migrations
                 {
                     b.HasOne("BudgetManagementSystem.Api.Models.FamilyDto", "Family")
                         .WithMany("FamilyMembers")
-                        .HasForeignKey("FamilyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FamilyId");
 
                     b.Navigation("Family");
                 });

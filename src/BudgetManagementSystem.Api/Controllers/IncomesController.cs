@@ -17,7 +17,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetIncomes(int familyId, int userId)
+        public async Task<IActionResult> GetIncomes(int familyId, int memberId)
         {
             try
             {
@@ -27,14 +27,14 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
                 var incomes = await _dbContext.Incomes
-                    .Where(i => i.UserId == userId)
+                    .Where(i => i.UserId == memberId)
                     .ToListAsync();
 
                 var incomeResponses = incomes.Select(i => new IncomeResponse
@@ -56,7 +56,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateIncome(int familyId, int userId, IncomeCreateRequest incomeRequest)
+        public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -79,7 +79,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Amount = incomeRequest.Amount,
                     Description = incomeRequest.Description,
                     Time = incomeRequest.Time,
-                    UserId = userId,
+                    UserId = memberId,
                 };
 
                 _dbContext.Incomes.Add(income);
@@ -104,7 +104,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{incomeId}")]
-        public async Task<IActionResult> GetIncomeById(int familyId, int userId, int incomeId)
+        public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");

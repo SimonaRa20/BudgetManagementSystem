@@ -54,5 +54,40 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while fetching users: {ex.Message}");
             }
         }
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int userId)
+        {
+            try
+            {
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var userToDelete = family.FamilyMembers.FirstOrDefault(u => u.Id == userId);
+
+                if (userToDelete == null)
+                {
+                    return NotFound("User not found in this family.");
+                }
+
+                // Remove the user from the family's list of members
+                family.FamilyMembers.Remove(userToDelete);
+
+                // Save changes to the database
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("User deleted from the family successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
+
     }
 }

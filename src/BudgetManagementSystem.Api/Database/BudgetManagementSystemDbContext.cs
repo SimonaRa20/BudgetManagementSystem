@@ -19,7 +19,6 @@ namespace BudgetManagementSystem.Api.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            // Define relationships here
             modelBuilder.Entity<UserDto>()
                 .HasOne(u => u.Family)
                 .WithMany(f => f.FamilyMembers)
