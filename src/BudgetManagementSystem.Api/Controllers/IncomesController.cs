@@ -120,7 +120,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found.");
                 }
 
-                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == userId);
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
                 if (income == null)
                 {
                     return NotFound("Income not found.");
