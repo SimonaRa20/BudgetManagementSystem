@@ -1,3 +1,4 @@
+
 import { Link, Route, Routes } from "react-router-dom";
 import { AuthData } from "../../auth/AuthWrapper";
 import { nav } from "./navigation";
@@ -28,11 +29,11 @@ export const RenderRoutes = () => {
    
         const MenuItem = ({r}) => {
              return (
-                  <div className="menuItem"><Link to={r.path}>{r.name}</Link></div>
+                  <div style={{margin:'5px'}} className="menuItem"><Link to={r.path} style={{color:'white', textDecoration:'none'}}>{r.name}</Link></div>
              )
         }
         return (
-             <div className="menu">
+             <div className="menu" style={{display: 'flex', backgroundColor: 'black', justifyContent: 'center', padding: '10px'}}>
                   { nav.map((r, i) => {
    
                        if (!r.isPrivate && r.isMenu) {
@@ -47,9 +48,9 @@ export const RenderRoutes = () => {
                   } )}
    
                   { user.isAuthenticated ?
-                  <div className="menuItem"><Link to={'#'} onClick={logout}>Log out</Link></div>
+                  <div className="menuItem" style={{margin:'5px'}}><Link to={'#'} style={{color:'white', textDecoration:'none'}} onClick={logout}>Log out</Link></div>
                   :
-                  <div className="menuItem"><Link to={'login'}>Log in</Link></div> }
+                  <div className="menuItem" style={{margin:'5px'}}><Link to={'login'} style={{color:'white', textDecoration:'none'}}>Log in</Link></div> }
              </div>
         )
    }
