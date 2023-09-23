@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthData } from "../../auth/AuthWrapper";
+import "./Login.css"; // Import your CSS file
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const Login = () => {
       const response = await axios.post(
         "https://localhost:7025/api/Auth/Login",
         {
-            email: formData.email,
+          email: formData.email,
           password: formData.password,
         }
       );
@@ -30,21 +31,23 @@ export const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("id", id);
 
-      console.log(token)
-      console.log(id)
+      console.log(token);
+      console.log(id);
       await login(formData.email, formData.password);
       navigate("/");
     } catch (error) {
-      setErrorMessage(error);
+      
+      setErrorMessage(error.response.data);
     }
   };
 
   return (
     <div className="page">
-      <h2>Login page</h2>
+      <h2>User Login</h2>
       <div className="inputs">
         <div className="input">
           <input
+            className="text-input"
             value={formData.email}
             onChange={(e) => setFormData({ email: e.target.value })}
             type="text"
@@ -53,6 +56,7 @@ export const Login = () => {
         </div>
         <div className="input">
           <input
+            className="text-input"
             value={formData.password}
             onChange={(e) => setFormData({ password: e.target.value })}
             type="password"
@@ -60,7 +64,9 @@ export const Login = () => {
           />
         </div>
         <div className="button">
-          <button onClick={doLogin}>Log in</button>
+          <button className="login-button" onClick={doLogin}>
+            Log in
+          </button>
         </div>
         {errorMessage ? (
           <div className="error">{errorMessage}</div>
