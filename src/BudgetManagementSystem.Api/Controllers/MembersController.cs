@@ -1,6 +1,7 @@
 ﻿using BudgetManagementSystem.Api.Contracts.Members;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetMembersByFamilyId(int familyId)
         {
             try
@@ -55,7 +57,9 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while fetching users: {ex.Message}");
             }
         }
+
         [HttpDelete("{userId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int userId)
         {
             try

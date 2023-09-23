@@ -36,7 +36,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 return Ok(userLoginResponse);
             }
 
-            return NotFound("User not found. Chech inserted data");
+            return NotFound("Invalid email or password. Please try again.");
         }
 
         [Route("Register")]

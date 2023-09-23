@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthData } from "../../auth/AuthWrapper";
+import { AuthData } from "../../../auth/AuthWrapper";
 import "./Login.css"; // Import your CSS file
 
 export const Login = () => {

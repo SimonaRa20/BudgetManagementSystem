@@ -1,6 +1,7 @@
 ﻿using BudgetManagementSystem.Api.Contracts.Families;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateFamily(FamilyCreateRequest familyRequest)
         {
             var familyExists = await _dbContext.Families.AnyAsync(f => f.Name == familyRequest.Title);
@@ -58,6 +60,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetFamilies()
         {
             try
@@ -85,6 +88,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetFamilyById(int id)
         {
             try
@@ -112,11 +116,11 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateFamily(int id, FamilyCreateRequest updateRequest)
         {
             try
             {
-                // Check if the family with the specified ID exists
                 var existingFamily = await _dbContext.Families.Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == id);
 
@@ -125,21 +129,17 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                // Update the family's title if provided
                 if (!string.IsNullOrWhiteSpace(updateRequest.Title))
                 {
                     existingFamily.Name = updateRequest.Title;
                 }
 
-                // Update the family's members if provided
                 if (updateRequest.UsersId != null && updateRequest.UsersId.Any())
                 {
                     var usersToAdd = await _dbContext.Users.Where(u => updateRequest.UsersId.Contains(u.Id)).ToListAsync();
 
-                    // Clear existing members
                     existingFamily.FamilyMembers.Clear();
 
-                    // Add the new members one by one
                     foreach (var user in usersToAdd)
                     {
                         existingFamily.FamilyMembers.Add(user);
@@ -155,7 +155,5 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while updating the family: {ex.Message}");
             }
         }
-
-
     }
 }

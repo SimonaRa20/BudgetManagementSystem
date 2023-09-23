@@ -1,6 +1,7 @@
 ﻿using BudgetManagementSystem.Api.Contracts.Expenses;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetExpenses(int familyId, int memberId)
         {
             try
@@ -57,6 +59,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateExpense(int familyId, int memberId, ExpenseCreateRequest expenseRequest)
         {
             try
@@ -105,6 +108,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{expenseId}")]
+        [Authorize]
         public async Task<IActionResult> GetExpenseById(int familyId, int memberId, int expenseId)
         {
             try

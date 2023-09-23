@@ -1,6 +1,7 @@
 ﻿using BudgetManagementSystem.Api.Contracts.Incomes;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetIncomes(int familyId, int memberId)
         {
             try
@@ -57,6 +59,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
         {
             try
@@ -105,6 +108,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{incomeId}")]
+        [Authorize]
         public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try
@@ -144,7 +148,5 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while fetching the income: {ex.Message}");
             }
         }
-
-
     }
 }

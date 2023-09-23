@@ -1,0 +1,47 @@
+.page {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  .inputs {
+    margin-top: 20px;
+  }
+  
+  .input {
+    margin-bottom: 10px;
+  }
+  
+  .text-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  .button {
+    text-align: center;
+  }
+  
+  .register-button {
+    padding: 10px 20px;
+    background-color: black;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .register-button:hover {
+    background-color: black;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
