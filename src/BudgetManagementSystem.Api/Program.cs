@@ -45,18 +45,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 var configuration = builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>();
 
 // front end join
-builder.Services.AddCors();
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("Test", builder =>
-//    {
-//        builder.WithOrigins("http://localhost:3000")
-//               .AllowAnyHeader()
-//               .AllowAnyMethod()
-//               .SetIsOriginAllowed((x) => true)
-//               .AllowCredentials();
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Test", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .SetIsOriginAllowed((x) => true)
+               .AllowCredentials();
+    });
+});
 
 builder.Services.AddDbContext<BudgetManagementSystemDbContext>(db => db.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -70,7 +69,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseCors("Test");
+app.UseCors("Test");
 
 app.UseAuthentication();
 app.UseAuthorization();
