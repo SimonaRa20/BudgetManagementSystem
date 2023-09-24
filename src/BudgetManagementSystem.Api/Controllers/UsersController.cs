@@ -9,12 +9,12 @@ namespace BudgetManagementSystem.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UsersController : Controller
     {
         private readonly IConfiguration _config;
         private readonly BudgetManagementSystemDbContext _dbContext;
 
-        public UserController(IConfiguration config, BudgetManagementSystemDbContext dbContext)
+        public UsersController(IConfiguration config, BudgetManagementSystemDbContext dbContext)
         {
             _config = config;
             _dbContext = dbContext;
