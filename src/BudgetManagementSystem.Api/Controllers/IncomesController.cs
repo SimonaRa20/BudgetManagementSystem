@@ -1,4 +1,5 @@
-﻿using BudgetManagementSystem.Api.Contracts.Incomes;
+﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Incomes;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomes(int familyId, int memberId)
         {
             try
@@ -59,7 +60,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
         {
             try
@@ -108,7 +109,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{incomeId}")]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try

@@ -1,4 +1,5 @@
-﻿using BudgetManagementSystem.Api.Contracts.Auth;
+﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Auth;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -139,7 +140,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 Name = user.Name,
                 Surname = user.Surname,
                 UserName = user.UserName,
-                Role = "Admin",
+                Role = Role.Owner,
                 Email = user.Email,
                 HashedPassword = user.Password,
                 FamilyId = null,
@@ -165,7 +166,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA512,
                 iterationCount: 10000,
-                numBytesRequested: 256 / 8)); // 256-bit salted hash
+                numBytesRequested: 256 / 8));
             return hashedPassword;
         }
     }

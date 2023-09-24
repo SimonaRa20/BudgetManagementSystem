@@ -80,10 +80,8 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found in this family.");
                 }
 
-                // Remove the user from the family's list of members
                 family.FamilyMembers.Remove(userToDelete);
 
-                // Save changes to the database
                 await _dbContext.SaveChangesAsync();
 
                 return Ok("User deleted from the family successfully.");

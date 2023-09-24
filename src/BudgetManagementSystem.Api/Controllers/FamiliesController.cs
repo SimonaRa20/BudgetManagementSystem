@@ -1,4 +1,5 @@
-﻿using BudgetManagementSystem.Api.Contracts.Families;
+﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Families;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateFamily(FamilyCreateRequest familyRequest)
         {
             var familyExists = await _dbContext.Families.AnyAsync(f => f.Name == familyRequest.Title);
@@ -60,7 +61,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilies()
         {
             try
@@ -88,7 +89,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilyById(int id)
         {
             try
@@ -116,7 +117,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateFamily(int id, FamilyCreateRequest updateRequest)
         {
             try
