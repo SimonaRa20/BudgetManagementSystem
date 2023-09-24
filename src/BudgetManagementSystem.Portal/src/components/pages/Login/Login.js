@@ -17,22 +17,22 @@ export const Login = () => {
 
   const doLogin = async () => {
     try {
-      const response = await axios.post(
-        "https://localhost:7025/api/Auth/Login",
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      // const response = await axios.post(
+      //   "https://localhost:7025/api/Auth/Login",
+      //   {
+      //     email: formData.email,
+      //     password: formData.password,
+      //   }
+      // );
 
-      const token = response.data.token;
-      const id = response.data.id;
+      // const token = response.data.token;
+      // const id = response.data.id;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("id", id);
+      // localStorage.setItem("token", token);
+      // localStorage.setItem("id", id);
 
-      console.log(token);
-      console.log(id);
+      // console.log(token);
+      // console.log(id);
       await login(formData.email, formData.password);
       navigate("/");
     } catch (error) {

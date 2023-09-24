@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export const AuthData = () => useContext(AuthContext);
 
 export const AuthWrapper = () => {
-  const [user, setUser] = useState({ email: "", isAuthenticated: false });
+  const [user, setUser] = useState({ email: "", isAuthenticated: false, role: "" });
 
   const login = (email, password) => {
     return new Promise(async (resolve, reject) => {
@@ -19,9 +19,11 @@ export const AuthWrapper = () => {
         });
 
         const token = response.data.token;
+        const role = response.data.role;
 
         localStorage.setItem("token", token);
-        setUser({ email: email, isAuthenticated: true });
+        localStorage.setItem("role", role);
+        setUser({ email: email, isAuthenticated: true, role: role });
         resolve("success");
       } catch (error) {
         reject("Incorrect password");
@@ -30,7 +32,7 @@ export const AuthWrapper = () => {
   };
 
   const logout = () => {
-    setUser({ ...user, isAuthenticated: false });
+    setUser({ ...user, isAuthenticated: false, role: "" });
   };
 
   return (

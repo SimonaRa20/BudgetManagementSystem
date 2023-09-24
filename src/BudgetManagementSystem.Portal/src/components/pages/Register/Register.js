@@ -54,7 +54,7 @@ export const Register = () => {
         }
       );
 
-      if (response.status == '200') {
+      if (response.status === '200') {
         navigate("/login");
       }
     } catch (error) {
