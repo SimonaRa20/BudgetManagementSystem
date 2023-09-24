@@ -1,8 +1,7 @@
 import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AuthData } from "../../../auth/AuthWrapper";
-import "./Login.css"; // Import your CSS file
+import "./Login.css";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -17,22 +16,6 @@ export const Login = () => {
 
   const doLogin = async () => {
     try {
-      // const response = await axios.post(
-      //   "https://localhost:7025/api/Auth/Login",
-      //   {
-      //     email: formData.email,
-      //     password: formData.password,
-      //   }
-      // );
-
-      // const token = response.data.token;
-      // const id = response.data.id;
-
-      // localStorage.setItem("token", token);
-      // localStorage.setItem("id", id);
-
-      // console.log(token);
-      // console.log(id);
       await login(formData.email, formData.password);
       navigate("/");
     } catch (error) {
