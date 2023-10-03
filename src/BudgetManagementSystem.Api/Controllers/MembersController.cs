@@ -58,9 +58,9 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-        [HttpDelete("{userId}")]
+        [HttpDelete("{memberId}")]
         //[Authorize]
-        public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int userId)
+        public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int memberId)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var userToDelete = family.FamilyMembers.FirstOrDefault(u => u.Id == userId);
+                var userToDelete = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
 
                 if (userToDelete == null)
                 {
@@ -92,9 +92,9 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-        [HttpPut("{userId}")]
+        [HttpPut("{memberId}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateUserInFamily(int familyId, int userId, UserUpdate updateRequest)
+        public async Task<IActionResult> UpdateUserInFamily(int familyId, int memberId, UserUpdate updateRequest)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("Family not found.");
                 }
 
-                var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == userId);
+                var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
 
                 if (userToUpdate == null)
                 {
