@@ -21,7 +21,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.Admin)]
+        //[Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> GetUsers()
         {
             try
@@ -41,7 +41,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = Role.Admin)]
+        //[Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> DeleteUser(int userId)
         {
             try

@@ -20,14 +20,14 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateFamily(FamilyCreateRequest familyRequest)
         {
             var familyExists = await _dbContext.Families.AnyAsync(f => f.Name == familyRequest.Title);
 
             if (familyExists)
             {
-                return NotFound($"Family with name '{familyRequest.Title}' was found.");
+                return BadRequest($"Family with name '{familyRequest.Title}' was found.");
             }
 
             if (familyRequest == null || string.IsNullOrWhiteSpace(familyRequest.Title))
@@ -44,9 +44,9 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 _dbContext.Families.Add(family);
 
-                if (familyRequest.UsersId != null && familyRequest.UsersId.Any())
+                if (familyRequest.MembersId != null && familyRequest.MembersId.Any())
                 {
-                    var usersToAdd = await _dbContext.Users.Where(u => familyRequest.UsersId.Contains(u.Id)).ToListAsync();
+                    var usersToAdd = await _dbContext.Users.Where(u => familyRequest.MembersId.Contains(u.Id)).ToListAsync();
                     family.FamilyMembers = usersToAdd;
                 }
 
@@ -61,7 +61,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilies()
         {
             try
@@ -89,7 +89,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilyById(int id)
         {
             try
@@ -117,34 +117,54 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateFamily(int id, FamilyCreateRequest updateRequest)
         {
             try
             {
+                if (id <= 0)
+                {
+                    return BadRequest("Invalid family id.");
+                }
+
+                if (updateRequest == null)
+                {
+                    return BadRequest("Invalid update request.");
+                }
+
                 var existingFamily = await _dbContext.Families.Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == id);
 
                 if (existingFamily == null)
                 {
-                    return NotFound("Family not found.");
+                    return BadRequest("Family not found.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(updateRequest.Title))
+                if (string.IsNullOrWhiteSpace(updateRequest.Title))
                 {
-                    existingFamily.Name = updateRequest.Title;
+                    return BadRequest("Title cannot be empty.");
                 }
 
-                if (updateRequest.UsersId != null && updateRequest.UsersId.Any())
+                existingFamily.Name = updateRequest.Title;
+
+                if (updateRequest.MembersId != null && updateRequest.MembersId.Any())
                 {
-                    var usersToAdd = await _dbContext.Users.Where(u => updateRequest.UsersId.Contains(u.Id)).ToListAsync();
+                    var usersToAdd = await _dbContext.Users.Where(u => updateRequest.MembersId.Contains(u.Id)).ToListAsync();
+
+                    if (usersToAdd.Count == 0)
+                    {
+                        return BadRequest("At least one member must be provided.");
+                    }
 
                     existingFamily.FamilyMembers.Clear();
-
                     foreach (var user in usersToAdd)
                     {
                         existingFamily.FamilyMembers.Add(user);
                     }
+                }
+                else
+                {
+                    return BadRequest("At least one member must be provided.");
                 }
 
                 await _dbContext.SaveChangesAsync();

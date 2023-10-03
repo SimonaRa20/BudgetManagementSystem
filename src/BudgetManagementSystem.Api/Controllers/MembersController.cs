@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -20,7 +21,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetMembersByFamilyId(int familyId)
         {
             try
@@ -43,7 +44,6 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 var userUpdates = members.Select(u => new UserUpdate
                 {
-                    Id = u.Id,
                     Name = u.Name,
                     Surname = u.Surname,
                     UserName = u.UserName,
@@ -59,7 +59,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{userId}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int userId)
         {
             try
@@ -89,6 +89,85 @@ namespace BudgetManagementSystem.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{userId}")]
+        //[Authorize]
+        public async Task<IActionResult> UpdateUserInFamily(int familyId, int userId, UserUpdate updateRequest)
+        {
+            try
+            {
+                List<string> errors = new List<string>();
+
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
+                if (family == null)
+                {
+                    errors.Add("Family not found.");
+                }
+
+                var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == userId);
+
+                if (userToUpdate == null)
+                {
+                    errors.Add("User not found in this family.");
+                }
+
+                if (updateRequest.Email.IsNullOrEmpty() || !updateRequest.Email.Contains('@'))
+                {
+                    errors.Add("Invalid email format.");
+                }
+
+                if (string.IsNullOrWhiteSpace(updateRequest.Name))
+                {
+                    errors.Add("User name is necessary.");
+                }
+
+                if (string.IsNullOrWhiteSpace(updateRequest.Surname))
+                {
+                    errors.Add("User surname is necessary.");
+                }
+
+                if (_dbContext.Users.Any(u => u.Email == updateRequest.Email))
+                {
+                    errors.Add("User with the same email already exists.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    return BadRequest(errors);
+                }
+
+                if (!string.IsNullOrWhiteSpace(updateRequest.Name))
+                {
+                    userToUpdate.Name = updateRequest.Name;
+                }
+
+                if (!string.IsNullOrWhiteSpace(updateRequest.Surname))
+                {
+                    userToUpdate.Surname = updateRequest.Surname;
+                }
+
+                if (!string.IsNullOrWhiteSpace(updateRequest.UserName))
+                {
+                    userToUpdate.UserName = updateRequest.UserName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(updateRequest.Email))
+                {
+                    userToUpdate.Email = updateRequest.Email;
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("User updated in the family successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while updating the user: {ex.Message}");
             }
         }
 

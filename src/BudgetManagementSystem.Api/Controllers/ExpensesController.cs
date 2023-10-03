@@ -20,7 +20,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetExpenses(int familyId, int memberId)
         {
             try
@@ -60,7 +60,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateExpense(int familyId, int memberId, ExpenseCreateRequest expenseRequest)
         {
             try
@@ -75,6 +75,38 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (user == null)
                 {
                     return NotFound("User not found.");
+                }
+
+                var errors = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(expenseRequest.Title))
+                {
+                    errors.Add("Title is required.");
+                }
+
+                if (!Enum.IsDefined(typeof(ExpenseCategories), expenseRequest.Category))
+                {
+                    errors.Add("Invalid category.");
+                }
+
+                if (expenseRequest.Amount <= 0)
+                {
+                    errors.Add("Amount must be greater than zero.");
+                }
+
+                if (string.IsNullOrWhiteSpace(expenseRequest.Description))
+                {
+                    errors.Add("Description is required.");
+                }
+
+                if (expenseRequest.Time == default)
+                {
+                    errors.Add("Time is required.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    return BadRequest(errors);
                 }
 
                 var expense = new ExpenseDto
@@ -108,8 +140,9 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
+
         [HttpGet("{expenseId}")]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetExpenseById(int familyId, int memberId, int expenseId)
         {
             try
@@ -149,5 +182,123 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while fetching the expense: {ex.Message}");
             }
         }
+
+        [HttpPut("{expenseId}")]
+        //[Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> UpdateExpense(int familyId, int memberId, int expenseId, ExpenseCreateRequest expenseUpdate)
+        {
+            try
+            {
+                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.UserId == memberId);
+                if (expense == null)
+                {
+                    return NotFound("Expense not found.");
+                }
+
+                var errors = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(expenseUpdate.Title))
+                {
+                    errors.Add("Title is required.");
+                }
+
+                if (!Enum.IsDefined(typeof(ExpenseCategories), expenseUpdate.Category))
+                {
+                    errors.Add("Invalid category.");
+                }
+
+                if (expenseUpdate.Amount <= 0)
+                {
+                    errors.Add("Amount must be greater than zero.");
+                }
+
+                if (string.IsNullOrWhiteSpace(expenseUpdate.Description))
+                {
+                    errors.Add("Description is required.");
+                }
+
+                if (expenseUpdate.Time == default)
+                {
+                    errors.Add("Time is required.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    return BadRequest(errors);
+                }
+
+                expense.Title = expenseUpdate.Title;
+                expense.Category = expenseUpdate.Category;
+                expense.Amount = expenseUpdate.Amount;
+                expense.Description = expenseUpdate.Description;
+                expense.Time = expenseUpdate.Time;
+
+                await _dbContext.SaveChangesAsync();
+
+                var expenseResponse = new ExpenseResponse
+                {
+                    Id = expense.Id,
+                    Title = expense.Title,
+                    Category = expense.Category,
+                    Amount = expense.Amount,
+                    Description = expense.Description,
+                    Time = expense.Time
+                };
+
+                return Ok(expenseResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while updating the expense: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{expenseId}")]
+        //[Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> DeleteExpense(int familyId, int memberId, int expenseId)
+        {
+            try
+            {
+                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.UserId == memberId);
+                if (expense == null)
+                {
+                    return NotFound("Expense not found.");
+                }
+
+                _dbContext.Expenses.Remove(expense);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Expense deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while deleting the expense: {ex.Message}");
+            }
+        }
+
     }
 }

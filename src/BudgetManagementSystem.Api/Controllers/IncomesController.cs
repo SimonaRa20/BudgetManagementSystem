@@ -20,7 +20,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomes(int familyId, int memberId)
         {
             try
@@ -60,7 +60,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
         {
             try
@@ -75,6 +75,38 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (user == null)
                 {
                     return NotFound("User not found.");
+                }
+
+                var errors = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(incomeRequest.Title))
+                {
+                    errors.Add("Title is required.");
+                }
+
+                if (!Enum.IsDefined(typeof(ExpenseCategories), incomeRequest.Category))
+                {
+                    errors.Add("Invalid category.");
+                }
+
+                if (incomeRequest.Amount <= 0)
+                {
+                    errors.Add("Amount must be greater than zero.");
+                }
+
+                if (string.IsNullOrWhiteSpace(incomeRequest.Description))
+                {
+                    errors.Add("Description is required.");
+                }
+
+                if (incomeRequest.Time == default)
+                {
+                    errors.Add("Time is required.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    return BadRequest(errors);
                 }
 
                 var income = new IncomeDto
@@ -109,7 +141,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{incomeId}")]
-        [Authorize(Roles = Role.Owner)]
+        //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try
@@ -147,6 +179,122 @@ namespace BudgetManagementSystem.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while fetching the income: {ex.Message}");
+            }
+        }
+        [HttpPut("{incomeId}")]
+        //[Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> UpdateIncome(int familyId, int memberId, int incomeId, IncomeCreateRequest incomeUpdate)
+        {
+            try
+            {
+                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
+                if (income == null)
+                {
+                    return NotFound("Income not found.");
+                }
+
+                var errors = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(incomeUpdate.Title))
+                {
+                    errors.Add("Title is required.");
+                }
+
+                if (!Enum.IsDefined(typeof(ExpenseCategories), incomeUpdate.Category))
+                {
+                    errors.Add("Invalid category.");
+                }
+
+                if (incomeUpdate.Amount <= 0)
+                {
+                    errors.Add("Amount must be greater than zero.");
+                }
+
+                if (string.IsNullOrWhiteSpace(incomeUpdate.Description))
+                {
+                    errors.Add("Description is required.");
+                }
+
+                if (incomeUpdate.Time == default)
+                {
+                    errors.Add("Time is required.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    return BadRequest(errors);
+                }
+
+                income.Title = incomeUpdate.Title;
+                income.Category = incomeUpdate.Category;
+                income.Amount = incomeUpdate.Amount;
+                income.Description = incomeUpdate.Description;
+                income.Time = incomeUpdate.Time;
+
+                await _dbContext.SaveChangesAsync();
+
+                var incomeResponse = new IncomeResponse
+                {
+                    Id = income.Id,
+                    Title = income.Title,
+                    Category = income.Category,
+                    Amount = income.Amount,
+                    Description = income.Description,
+                    Time = income.Time
+                };
+
+                return Ok(incomeResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while updating the income: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{incomeId}")]
+        //[Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> DeleteIncome(int familyId, int memberId, int incomeId)
+        {
+            try
+            {
+                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
+                if (income == null)
+                {
+                    return NotFound("Income not found.");
+                }
+
+                _dbContext.Incomes.Remove(income);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Income deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while deleting the income: {ex.Message}");
             }
         }
     }
