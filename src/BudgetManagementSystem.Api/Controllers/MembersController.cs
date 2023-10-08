@@ -116,11 +116,6 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("User not found in this family.");
                 }
 
-                if (updateRequest.Email.IsNullOrEmpty() || !updateRequest.Email.Contains('@'))
-                {
-                    errors.Add("Invalid email format.");
-                }
-
                 if (string.IsNullOrWhiteSpace(updateRequest.Name))
                 {
                     errors.Add("User name is necessary.");
@@ -131,9 +126,13 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("User surname is necessary.");
                 }
 
-                if (_dbContext.Users.Any(u => u.Email == updateRequest.Email))
+                if (updateRequest.Email.IsNullOrEmpty() || !updateRequest.Email.Contains('@'))
                 {
-                    errors.Add("User with the same email already exists.");
+                    errors.Add("Invalid email format.");
+                }
+                else if (_dbContext.Users.Any(u => u.Email == updateRequest.Email && u.Id != userToUpdate.Id))
+                {
+                    errors.Add("Another user with the same email already exists.");
                 }
 
                 if (errors.Count > 0)

@@ -84,7 +84,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("Title is required.");
                 }
 
-                if (!Enum.IsDefined(typeof(ExpenseCategories), incomeRequest.Category))
+                if (!Enum.IsDefined(typeof(IncomeCategories), incomeRequest.Category))
                 {
                     errors.Add("Invalid category.");
                 }
@@ -212,7 +212,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("Title is required.");
                 }
 
-                if (!Enum.IsDefined(typeof(ExpenseCategories), incomeUpdate.Category))
+                if (!Enum.IsDefined(typeof(IncomeCategories), incomeUpdate.Category))
                 {
                     errors.Add("Invalid category.");
                 }
