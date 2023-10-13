@@ -171,13 +171,13 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-        [HttpPost("{memberId}")]
+        [HttpPost]
         //[Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> AddMemberToFamily(int memberId, int familyId)
+        public async Task<IActionResult> AddMemberToFamily([FromBody]int userId, int familyId)
         {
             try
             {
-                if (memberId <= 0)
+                if (userId <= 0)
                 {
                     return BadRequest("Invalid user id.");
                 }
@@ -189,7 +189,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return BadRequest("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)
                 {
@@ -199,7 +199,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 var familyMember = new FamilyMemberDto
                 {
                     FamilyId = familyId,
-                    UserId = memberId,
+                    UserId = userId,
                     Type = MemberType.Other,
                     User = user
                 };
