@@ -1,4 +1,5 @@
-﻿using BudgetManagementSystem.Api.Contracts.Families;
+﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Families;
 using BudgetManagementSystem.Api.Contracts.Members;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
@@ -13,11 +14,11 @@ namespace BudgetManagementSystem.Api.Controllers
 {
     [Route("api/Families/{familyId}/[controller]")]
     [ApiController]
-    public class MembersController : Controller
+    public class FamilyMembersController : Controller
     {
         private readonly BudgetManagementSystemDbContext _dbContext;
 
-        public MembersController(BudgetManagementSystemDbContext dbContext)
+        public FamilyMembersController(BudgetManagementSystemDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -44,23 +45,45 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("No members found for this family.");
                 }
 
-                var userUpdates = members.Select(u => new member
-                {
-                    FamilyId = familyId,
-                    Name = u.Name,
-                    Surname = u.Surname,
-                    UserName = u.UserName,
-                    Email = u.Email
-                }).ToList();
-
-                return Ok(userUpdates);
+               
+                return Ok(members);
             }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while fetching users: {ex.Message}");
             }
         }
+        [HttpGet("{memberId}")]
+        //[Authorize]
+        public async Task<IActionResult> GetMemberByFamilyId(int familyId, int memberId)
+        {
+            try
+            {
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
 
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var members = family.FamilyMembers.ToList();
+
+                if (members == null || !members.Any())
+                {
+                    return NotFound("No members found for this family.");
+                }
+
+                var member = members.FirstOrDefault(x => x.Id == memberId);
+
+                return Ok(member);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while fetching users: {ex.Message}");
+            }
+        }
         [HttpDelete("{memberId}")]
         //[Authorize]
         public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int memberId)
@@ -97,12 +120,19 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPut("{memberId}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateUserInFamily(int familyId, int memberId, UserUpdate updateRequest)
+        public async Task<IActionResult> UpdateUserInFamily(int familyId, int memberId, [FromBody] MemberType type)
         {
             try
             {
                 List<string> errors = new List<string>();
 
+                // Check if the provided type is valid
+                if (!Enum.IsDefined(typeof(MemberType), type))
+                {
+                    errors.Add("Invalid member type.");
+                }
+
+                // Retrieve the family
                 var family = await _dbContext.Families
                     .Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == familyId);
@@ -112,30 +142,12 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("Family not found.");
                 }
 
+                // Find the user to update
                 var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
 
                 if (userToUpdate == null)
                 {
                     errors.Add("User not found in this family.");
-                }
-
-                if (string.IsNullOrWhiteSpace(updateRequest.Name))
-                {
-                    errors.Add("User name is necessary.");
-                }
-
-                if (string.IsNullOrWhiteSpace(updateRequest.Surname))
-                {
-                    errors.Add("User surname is necessary.");
-                }
-
-                if (updateRequest.Email.IsNullOrEmpty() || !updateRequest.Email.Contains('@'))
-                {
-                    errors.Add("Invalid email format.");
-                }
-                else if (_dbContext.Users.Any(u => u.Email == updateRequest.Email && u.Id != userToUpdate.Id))
-                {
-                    errors.Add("Another user with the same email already exists.");
                 }
 
                 if (errors.Count > 0)
@@ -146,26 +158,9 @@ namespace BudgetManagementSystem.Api.Controllers
                     };
                 }
 
-                if (!string.IsNullOrWhiteSpace(updateRequest.Name))
-                {
-                    userToUpdate.Name = updateRequest.Name;
-                }
+                userToUpdate.Type = type;
 
-                if (!string.IsNullOrWhiteSpace(updateRequest.Surname))
-                {
-                    userToUpdate.Surname = updateRequest.Surname;
-                }
-
-                if (!string.IsNullOrWhiteSpace(updateRequest.UserName))
-                {
-                    userToUpdate.UserName = updateRequest.UserName;
-                }
-
-                if (!string.IsNullOrWhiteSpace(updateRequest.Email))
-                {
-                    userToUpdate.Email = updateRequest.Email;
-                }
-
+                // Save the changes to the database
                 await _dbContext.SaveChangesAsync();
 
                 return Ok("User updated in the family successfully.");
@@ -175,13 +170,14 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while updating the user: {ex.Message}");
             }
         }
-        [HttpPost("{id}")]
+
+        [HttpPost("{memberId}")]
         //[Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> AddMemberToFamily(int id, int familyId)
+        public async Task<IActionResult> AddMemberToFamily(int memberId, int familyId)
         {
             try
             {
-                if (id <= 0)
+                if (memberId <= 0)
                 {
                     return BadRequest("Invalid user id.");
                 }
@@ -193,19 +189,28 @@ namespace BudgetManagementSystem.Api.Controllers
                     return BadRequest("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
 
                 if (user == null)
                 {
                     return BadRequest("User not found.");
                 }
 
-                existingFamily.FamilyMembers.Add(user);
+                var familyMember = new FamilyMemberDto
+                {
+                    FamilyId = familyId,
+                    UserId = memberId,
+                    Type = MemberType.Other,
+                    User = user
+                };
+
+                _dbContext.FamilyMembers.Add(familyMember);
 
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(existingFamily);
+                existingFamily.FamilyMembers.Add(familyMember);
 
+                return Ok(existingFamily);
             }
             catch (Exception ex)
             {

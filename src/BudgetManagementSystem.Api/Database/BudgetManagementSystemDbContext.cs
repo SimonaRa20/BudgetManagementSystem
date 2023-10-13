@@ -12,27 +12,32 @@ namespace BudgetManagementSystem.Api.Database
 
         public DbSet<UserDto> Users { get; set; }
         public DbSet<FamilyDto> Families { get; set; }
+        public DbSet<FamilyMemberDto> FamilyMembers { get; set; }
         public DbSet<IncomeDto> Incomes { get; set; }
         public DbSet<ExpenseDto> Expenses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<FamilyDto>()
+                .HasMany(f => f.FamilyMembers)
+                .WithOne(fm => fm.Family)
+                .HasForeignKey(fm => fm.FamilyId);
 
-            modelBuilder.Entity<UserDto>()
-                .HasOne(u => u.Family)
-                .WithMany(f => f.FamilyMembers)
-                .HasForeignKey(u => u.FamilyId);
+            modelBuilder.Entity<FamilyMemberDto>()
+                .HasOne(member => member.Family)
+                .WithMany(family => family.FamilyMembers)
+                .HasForeignKey(member => member.FamilyId);
 
-            modelBuilder.Entity<IncomeDto>()
-                .HasOne(i => i.User)
-                .WithMany(u => u.Incomes)
-                .HasForeignKey(i => i.UserId);
+            modelBuilder.Entity<FamilyMemberDto>()
+                .HasMany(member => member.Incomes)
+                .WithOne(income => income.FamilyMember)
+                .HasForeignKey(income => income.FamilyMemberId);
 
-            modelBuilder.Entity<ExpenseDto>()
-                .HasOne(e => e.User)
-                .WithMany(u => u.Expenses)
-                .HasForeignKey(e => e.UserId);
+            modelBuilder.Entity<FamilyMemberDto>()
+                .HasMany(member => member.Expenses)
+                .WithOne(expense => expense.FamilyMember)
+                .HasForeignKey(expense => expense.FamilyMemberId);
         }
     }
 }

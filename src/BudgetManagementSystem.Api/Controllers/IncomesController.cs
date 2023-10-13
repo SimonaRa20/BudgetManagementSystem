@@ -39,7 +39,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 }
 
                 var incomes = await _dbContext.Incomes
-                    .Where(i => i.UserId == memberId)
+                    .Where(i => i.FamilyMemberId == memberId)
                     .ToListAsync();
 
                 var incomeResponses = incomes.Select(i => new IncomeResponse
@@ -120,7 +120,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Amount = incomeRequest.Amount,
                     Description = incomeRequest.Description,
                     Time = incomeRequest.Time,
-                    UserId = memberId,
+                    FamilyMemberId = memberId,
                 };
 
                 _dbContext.Incomes.Add(income);
@@ -136,7 +136,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Time = income.Time
                 };
 
-                return Created("",incomeResponse);
+                return Created("", incomeResponse);
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found.");
                 }
 
-                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.FamilyMemberId == memberId);
                 if (income == null)
                 {
                     return NotFound("Income not found.");
@@ -203,7 +203,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found.");
                 }
 
-                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.FamilyMemberId == memberId);
                 if (income == null)
                 {
                     return NotFound("Income not found.");
@@ -288,7 +288,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found.");
                 }
 
-                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.UserId == memberId);
+                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.FamilyMemberId == memberId);
                 if (income == null)
                 {
                     return NotFound("Income not found.");

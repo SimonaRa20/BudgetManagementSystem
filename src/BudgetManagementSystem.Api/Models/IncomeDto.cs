@@ -12,7 +12,7 @@ namespace BudgetManagementSystem.Api.Models
         public DateTime Time { get; set; }
 
         // Foreign key to represent the user who earned the income
-        public int UserId { get; set; }
-        public UserDto User { get; set; }
+        public int FamilyMemberId { get; set; }
+        public FamilyMemberDto FamilyMember { get; set; }
     }
 }

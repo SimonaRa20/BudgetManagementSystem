@@ -2,7 +2,7 @@
 {
     public class member
     {
-        public int FamilyId { get; set; }
+        public int FamilyMemberId { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public string? UserName { get; set; }

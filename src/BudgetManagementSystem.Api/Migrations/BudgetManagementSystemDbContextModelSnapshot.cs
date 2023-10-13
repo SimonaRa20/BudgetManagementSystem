@@ -39,18 +39,18 @@ namespace BudgetManagementSystem.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FamilyMemberId");
 
                     b.ToTable("Expenses");
                 });
@@ -63,13 +63,39 @@ namespace BudgetManagementSystem.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Families");
+                });
+
+            modelBuilder.Entity("BudgetManagementSystem.Api.Models.FamilyMemberDto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FamilyMembers");
                 });
 
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.IncomeDto", b =>
@@ -89,18 +115,18 @@ namespace BudgetManagementSystem.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FamilyMemberId");
 
                     b.ToTable("Incomes");
                 });
@@ -115,9 +141,6 @@ namespace BudgetManagementSystem.Api.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("FamilyId")
-                        .HasColumnType("int");
 
                     b.Property<string>("HashedPassword")
                         .HasColumnType("nvarchar(max)");
@@ -136,40 +159,48 @@ namespace BudgetManagementSystem.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FamilyId");
-
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.ExpenseDto", b =>
                 {
-                    b.HasOne("BudgetManagementSystem.Api.Models.UserDto", "User")
+                    b.HasOne("BudgetManagementSystem.Api.Models.FamilyMemberDto", "FamilyMember")
                         .WithMany("Expenses")
+                        .HasForeignKey("FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+                });
+
+            modelBuilder.Entity("BudgetManagementSystem.Api.Models.FamilyMemberDto", b =>
+                {
+                    b.HasOne("BudgetManagementSystem.Api.Models.FamilyDto", "Family")
+                        .WithMany("FamilyMembers")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BudgetManagementSystem.Api.Models.UserDto", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Family");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.IncomeDto", b =>
                 {
-                    b.HasOne("BudgetManagementSystem.Api.Models.UserDto", "User")
+                    b.HasOne("BudgetManagementSystem.Api.Models.FamilyMemberDto", "FamilyMember")
                         .WithMany("Incomes")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FamilyMemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BudgetManagementSystem.Api.Models.UserDto", b =>
-                {
-                    b.HasOne("BudgetManagementSystem.Api.Models.FamilyDto", "Family")
-                        .WithMany("FamilyMembers")
-                        .HasForeignKey("FamilyId");
-
-                    b.Navigation("Family");
+                    b.Navigation("FamilyMember");
                 });
 
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.FamilyDto", b =>
@@ -177,7 +208,7 @@ namespace BudgetManagementSystem.Api.Migrations
                     b.Navigation("FamilyMembers");
                 });
 
-            modelBuilder.Entity("BudgetManagementSystem.Api.Models.UserDto", b =>
+            modelBuilder.Entity("BudgetManagementSystem.Api.Models.FamilyMemberDto", b =>
                 {
                     b.Navigation("Expenses");
 

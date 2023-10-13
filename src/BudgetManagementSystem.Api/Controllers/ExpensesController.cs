@@ -32,14 +32,14 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
-                if (user == null)
+                var member = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (member == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Member not found.");
                 }
 
                 var expenses = await _dbContext.Expenses
-                    .Where(i => i.UserId == memberId)
+                    .Where(i => i.FamilyMemberId == memberId)
                     .ToListAsync();
 
                 var expenseResponses = expenses.Select(i => new ExpenseResponse
@@ -72,10 +72,10 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
-                if (user == null)
+                var member = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (member == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Member not found.");
                 }
 
                 var errors = new List<string>();
@@ -120,7 +120,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Amount = expenseRequest.Amount,
                     Description = expenseRequest.Description,
                     Time = expenseRequest.Time,
-                    UserId = memberId,
+                    FamilyMemberId = memberId,
                 };
 
                 _dbContext.Expenses.Add(expense);
@@ -136,7 +136,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Time = expense.Time
                 };
 
-                return Created("",expenseResponses);
+                return Created("", expenseResponses);
             }
             catch (Exception ex)
             {
@@ -157,13 +157,13 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
-                if (user == null)
+                var member = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (member == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Member not found.");
                 }
 
-                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.UserId == memberId);
+                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.FamilyMemberId == memberId);
                 if (expense == null)
                 {
                     return NotFound("Expense not found.");
@@ -199,13 +199,13 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
-                if (user == null)
+                var member = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (member == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Member not found.");
                 }
 
-                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.UserId == memberId);
+                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.FamilyMemberId == memberId);
                 if (expense == null)
                 {
                     return NotFound("Expense not found.");
@@ -284,13 +284,13 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
-                if (user == null)
+                var member = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
+                if (member == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Member not found.");
                 }
 
-                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.UserId == memberId);
+                var expense = await _dbContext.Expenses.FirstOrDefaultAsync(i => i.Id == expenseId && i.FamilyMemberId == memberId);
                 if (expense == null)
                 {
                     return NotFound("Expense not found.");

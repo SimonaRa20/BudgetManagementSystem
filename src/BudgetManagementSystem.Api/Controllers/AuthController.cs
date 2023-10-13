@@ -35,7 +35,7 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 var token = GenerateToken(user);
                 var userLoginResponse = LoginResponse(user, token);
-                return Created("",userLoginResponse);
+                return Created("", userLoginResponse);
             }
 
             return NotFound("Invalid email or password. Please try again.");
@@ -147,7 +147,6 @@ namespace BudgetManagementSystem.Api.Controllers
                 Role = Role.Owner,
                 Email = user.Email,
                 HashedPassword = user.Password,
-                FamilyId = null,
             };
 
             return userDto;

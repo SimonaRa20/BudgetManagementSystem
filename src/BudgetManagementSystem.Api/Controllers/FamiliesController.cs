@@ -25,7 +25,7 @@ namespace BudgetManagementSystem.Api.Controllers
         //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateFamily(FamilyCreateRequest familyRequest)
         {
-            var familyExists = await _dbContext.Families.AnyAsync(f => f.Name == familyRequest.Title);
+            var familyExists = await _dbContext.Families.AnyAsync(f => f.Title == familyRequest.Title);
 
             if (familyExists)
             {
@@ -41,20 +41,14 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 var family = new FamilyDto
                 {
-                    Name = familyRequest.Title,
+                    Title = familyRequest.Title,
                 };
 
                 _dbContext.Families.Add(family);
 
-                if (familyRequest.MembersId != null && familyRequest.MembersId.Any())
-                {
-                    var usersToAdd = await _dbContext.Users.Where(u => familyRequest.MembersId.Contains(u.Id)).ToListAsync();
-                    family.FamilyMembers = usersToAdd;
-                }
-
                 await _dbContext.SaveChangesAsync();
 
-                return Created("",family);
+                return Created("", family);
             }
             catch (Exception ex)
             {
@@ -72,10 +66,10 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Select(f => new FamilyResponse
                     {
                         Id = f.Id,
-                        Name = f.Name
+                        Title = f.Title,
+                        Members = f.FamilyMembers
+
                     }).ToListAsync();
-
-
 
                 if (families == null || !families.Any())
                 {
@@ -101,7 +95,8 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Select(f => new FamilyResponse
                     {
                         Id = f.Id,
-                        Name = f.Name
+                        Title = f.Title,
+                        Members = f.FamilyMembers
                     })
                     .FirstOrDefaultAsync();
 
@@ -135,7 +130,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 var members = family.FamilyMembers.Count();
 
-                if(members > 0)
+                if (members > 0)
                 {
                     return BadRequest($"Family has members. Family cannot be deleted");
                 }
@@ -185,27 +180,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     };
                 }
 
-                existingFamily.Name = updateRequest.Title;
-
-                if (updateRequest.MembersId != null && updateRequest.MembersId.Any())
-                {
-                    var usersToAdd = await _dbContext.Users.Where(u => updateRequest.MembersId.Contains(u.Id)).ToListAsync();
-
-                    if (usersToAdd.Count == 0)
-                    {
-                        return BadRequest("At least one member must be provided.");
-                    }
-
-                    existingFamily.FamilyMembers.Clear();
-                    foreach (var user in usersToAdd)
-                    {
-                        existingFamily.FamilyMembers.Add(user);
-                    }
-                }
-                else
-                {
-                    return BadRequest("At least one member must be provided.");
-                }
+                existingFamily.Title = updateRequest.Title;
 
                 await _dbContext.SaveChangesAsync();
 
