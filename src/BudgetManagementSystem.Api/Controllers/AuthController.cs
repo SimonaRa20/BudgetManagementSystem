@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -34,7 +35,7 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 var token = GenerateToken(user);
                 var userLoginResponse = LoginResponse(user, token);
-                return Ok(userLoginResponse);
+                return Created("",userLoginResponse);
             }
 
             return NotFound("Invalid email or password. Please try again.");
@@ -73,7 +74,10 @@ namespace BudgetManagementSystem.Api.Controllers
 
             if (errors.Count > 0)
             {
-                return BadRequest(errors);
+                return new ObjectResult(errors)
+                {
+                    StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                };
             }
 
             try
@@ -85,7 +89,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 _dbContext.Users.Add(userDto);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok();
+                return Created("", userDto);
             }
             catch (Exception ex)
             {

@@ -5,6 +5,7 @@ using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -106,7 +107,10 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 if (errors.Count > 0)
                 {
-                    return BadRequest(errors);
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 var income = new IncomeDto
@@ -132,7 +136,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Time = income.Time
                 };
 
-                return Ok(incomeResponse);
+                return Created("",incomeResponse);
             }
             catch (Exception ex)
             {
@@ -234,7 +238,10 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 if (errors.Count > 0)
                 {
-                    return BadRequest(errors);
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 income.Title = incomeUpdate.Title;

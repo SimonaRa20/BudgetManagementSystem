@@ -1,10 +1,12 @@
-﻿using BudgetManagementSystem.Api.Contracts.Members;
+﻿using BudgetManagementSystem.Api.Contracts.Families;
+using BudgetManagementSystem.Api.Contracts.Members;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetManagementSystem.Api.Controllers
@@ -42,8 +44,9 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("No members found for this family.");
                 }
 
-                var userUpdates = members.Select(u => new UserUpdate
+                var userUpdates = members.Select(u => new member
                 {
+                    FamilyId = familyId,
                     Name = u.Name,
                     Surname = u.Surname,
                     UserName = u.UserName,
@@ -137,7 +140,10 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 if (errors.Count > 0)
                 {
-                    return BadRequest(errors);
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 if (!string.IsNullOrWhiteSpace(updateRequest.Name))
@@ -169,6 +175,42 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while updating the user: {ex.Message}");
             }
         }
+        [HttpPost("{id}")]
+        //[Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> AddMemberToFamily(int id, int familyId)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("Invalid user id.");
+                }
 
+                var existingFamily = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+
+                if (existingFamily == null)
+                {
+                    return BadRequest("Family not found.");
+                }
+
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return BadRequest("User not found.");
+                }
+
+                existingFamily.FamilyMembers.Add(user);
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(existingFamily);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while updating the family: {ex.Message}");
+            }
+        }
     }
 }

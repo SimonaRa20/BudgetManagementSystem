@@ -5,6 +5,8 @@ using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -52,7 +54,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(family);
+                return Created("",family);
             }
             catch (Exception ex)
             {
@@ -116,6 +118,40 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        //[Authorize]
+        public async Task<IActionResult> DeleteFamily(int id)
+        {
+            try
+            {
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == id);
+
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var members = family.FamilyMembers.Count();
+
+                if(members > 0)
+                {
+                    return BadRequest($"Family has members. Family cannot be deleted");
+                }
+
+
+                _dbContext.Families.Remove(family);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Family deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
+
         [HttpPut("{id}")]
         //[Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateFamily(int id, FamilyCreateRequest updateRequest)
@@ -142,7 +178,11 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 if (string.IsNullOrWhiteSpace(updateRequest.Title))
                 {
-                    return BadRequest("Title cannot be empty.");
+                    string errors = "Title cannot be empty.";
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 existingFamily.Name = updateRequest.Title;
