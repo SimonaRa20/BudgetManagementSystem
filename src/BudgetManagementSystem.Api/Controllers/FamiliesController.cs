@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
+using BudgetManagementSystem.Api.Contracts.Members;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -67,7 +68,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     {
                         Id = f.Id,
                         Title = f.Title,
-                        Members = f.FamilyMembers
+                        MembersCount = f.FamilyMembers.Count
 
                     }).ToListAsync();
 
@@ -90,28 +91,41 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                FamilyResponse family = await _dbContext.Families
-                    .Where(x => x.Id == id)
-                    .Select(f => new FamilyResponse
-                    {
-                        Id = f.Id,
-                        Title = f.Title,
-                        Members = f.FamilyMembers
-                    })
-                    .FirstOrDefaultAsync();
+                var family = await _dbContext.Families.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                return Ok(family);
+                // Retrieve family members for the given family
+                var familyMembers = await _dbContext.FamilyMembers
+                    .Where(fm => fm.FamilyId == id)
+                    .Select(fm => new Member
+                    {
+                        FamilyMemberId = fm.Id,
+                        Name = fm.User.Name,
+                        Surname = fm.User.Surname,
+                        UserName = fm.User.UserName,
+                        Email = fm.User.Email
+                    })
+                    .ToListAsync();
+
+                var familyDto = new FamilyByIdResponse
+                {
+                    Id = family.Id,
+                    Title = family.Title,
+                    Members = familyMembers
+                };
+
+                return Ok(familyDto);
             }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while fetching the family: {ex.Message}");
             }
         }
+
 
         [HttpDelete("{id}")]
         //[Authorize]
@@ -155,7 +169,11 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 if (id <= 0)
                 {
-                    return BadRequest("Invalid family id.");
+                    string errors = "Invalid family id.";
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 if (updateRequest == null)

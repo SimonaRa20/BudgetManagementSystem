@@ -38,52 +38,60 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var members = family.FamilyMembers.ToList();
+                var familyMembers = await _dbContext.FamilyMembers
+                    .Where(fm => fm.FamilyId == familyId)
+                    .Include(fm => fm.User)
+                    .Select(fm => new Member
+                    {
+                        FamilyMemberId = fm.Id,
+                        Name = fm.User.Name,
+                        Surname = fm.User.Surname,
+                        UserName = fm.User.UserName,
+                        Email = fm.User.Email
+                    })
+                    .ToListAsync();
 
-                if (members == null || !members.Any())
-                {
-                    return NotFound("No members found for this family.");
-                }
-
-               
-                return Ok(members);
+                return Ok(familyMembers);
             }
             catch (Exception ex)
             {
-                return BadRequest($"An error occurred while fetching users: {ex.Message}");
+                return BadRequest($"An error occurred while fetching members: {ex.Message}");
             }
         }
+
         [HttpGet("{memberId}")]
         //[Authorize]
         public async Task<IActionResult> GetMemberByFamilyId(int familyId, int memberId)
         {
             try
             {
-                var family = await _dbContext.Families
-                    .Include(f => f.FamilyMembers)
-                    .FirstOrDefaultAsync(f => f.Id == familyId);
+                var familyMember = await _dbContext.FamilyMembers
+                    .Where(fm => fm.FamilyId == familyId && fm.Id == memberId)
+                    .Include(fm => fm.User)
+                    .FirstOrDefaultAsync();
 
-                if (family == null)
+                if (familyMember == null)
                 {
-                    return NotFound("Family not found.");
+                    return NotFound("Family member not found.");
                 }
 
-                var members = family.FamilyMembers.ToList();
-
-                if (members == null || !members.Any())
+                var member = new Member
                 {
-                    return NotFound("No members found for this family.");
-                }
-
-                var member = members.FirstOrDefault(x => x.Id == memberId);
+                    FamilyMemberId = familyMember.Id,
+                    Name = familyMember.User.Name,
+                    Surname = familyMember.User.Surname,
+                    UserName = familyMember.User.UserName,
+                    Email = familyMember.User.Email
+                };
 
                 return Ok(member);
             }
             catch (Exception ex)
             {
-                return BadRequest($"An error occurred while fetching users: {ex.Message}");
+                return BadRequest($"An error occurred while fetching the member: {ex.Message}");
             }
         }
+
         [HttpDelete("{memberId}")]
         //[Authorize]
         public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int memberId)

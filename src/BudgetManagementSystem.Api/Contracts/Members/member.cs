@@ -1,6 +1,6 @@
 ﻿namespace BudgetManagementSystem.Api.Contracts.Members
 {
-    public class member
+    public class Member
     {
         public int FamilyMemberId { get; set; }
         public string? Name { get; set; }

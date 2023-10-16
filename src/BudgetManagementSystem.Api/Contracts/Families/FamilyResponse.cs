@@ -6,6 +6,6 @@ namespace BudgetManagementSystem.Api.Contracts.Families
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public List<FamilyMemberDto> Members { get; set; }
+        public int MembersCount { get; set; }
     }
 }
