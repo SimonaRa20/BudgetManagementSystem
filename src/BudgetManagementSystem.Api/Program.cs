@@ -59,6 +59,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<BudgetManagementSystemDbContext>(db => db.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -73,6 +74,8 @@ app.UseCors("Test");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.MapControllers();
 
