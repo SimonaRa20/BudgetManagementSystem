@@ -21,7 +21,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomes(int familyId, int memberId)
         {
             try
@@ -61,7 +61,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
         {
             try
@@ -145,7 +145,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{incomeId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try
@@ -186,7 +186,7 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
         [HttpPut("{incomeId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateIncome(int familyId, int memberId, int incomeId, IncomeCreateRequest incomeUpdate)
         {
             try
@@ -271,7 +271,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{incomeId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> DeleteIncome(int familyId, int memberId, int incomeId)
         {
             try

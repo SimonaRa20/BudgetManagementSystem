@@ -24,7 +24,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetMembersByFamilyId(int familyId)
         {
             try
@@ -60,7 +60,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet("{memberId}")]
-        //[Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetMemberByFamilyId(int familyId, int memberId)
         {
             try
@@ -93,7 +93,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{memberId}")]
-        //[Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> DeleteMemberFromFamily(int familyId, int memberId)
         {
             try
@@ -127,20 +127,18 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPut("{memberId}")]
-        //[Authorize]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateUserInFamily(int familyId, int memberId, [FromBody] MemberType type)
         {
             try
             {
                 List<string> errors = new List<string>();
 
-                // Check if the provided type is valid
                 if (!Enum.IsDefined(typeof(MemberType), type))
                 {
                     errors.Add("Invalid member type.");
                 }
 
-                // Retrieve the family
                 var family = await _dbContext.Families
                     .Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == familyId);
@@ -150,7 +148,6 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("Family not found.");
                 }
 
-                // Find the user to update
                 var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
 
                 if (userToUpdate == null)
@@ -167,8 +164,6 @@ namespace BudgetManagementSystem.Api.Controllers
                 }
 
                 userToUpdate.Type = type;
-
-                // Save the changes to the database
                 await _dbContext.SaveChangesAsync();
 
                 return Ok("User updated in the family successfully.");
@@ -180,7 +175,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> AddMemberToFamily([FromBody]int userId, int familyId)
         {
             try

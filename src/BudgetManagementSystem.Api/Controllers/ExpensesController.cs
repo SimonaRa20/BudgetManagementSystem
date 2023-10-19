@@ -21,7 +21,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetExpenses(int familyId, int memberId)
         {
             try
@@ -61,7 +61,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateExpense(int familyId, int memberId, ExpenseCreateRequest expenseRequest)
         {
             try
@@ -146,7 +146,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
 
         [HttpGet("{expenseId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetExpenseById(int familyId, int memberId, int expenseId)
         {
             try
@@ -188,7 +188,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpPut("{expenseId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateExpense(int familyId, int memberId, int expenseId, ExpenseCreateRequest expenseUpdate)
         {
             try
@@ -273,7 +273,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{expenseId}")]
-        //[Authorize(Roles = Role.Owner)]
+        [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> DeleteExpense(int familyId, int memberId, int expenseId)
         {
             try
@@ -306,6 +306,5 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while deleting the expense: {ex.Message}");
             }
         }
-
     }
 }

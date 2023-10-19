@@ -2,9 +2,13 @@
 {
     public enum MemberType
     {
-        Mum,
-        Dad,
-        Son,
+        Parent,
+        Child,
+        Sibling,
+        Grandparent,
+        Aunt,
+        Uncle,
+        Cousin,
         Other
     }
 }
