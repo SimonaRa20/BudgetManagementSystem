@@ -2,7 +2,6 @@
 using BudgetManagementSystem.Api.Contracts.Auth;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

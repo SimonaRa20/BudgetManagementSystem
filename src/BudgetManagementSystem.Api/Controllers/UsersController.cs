@@ -1,5 +1,4 @@
 ﻿using BudgetManagementSystem.Api.Constants;
-using BudgetManagementSystem.Api.Contracts.Expenses;
 using BudgetManagementSystem.Api.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,13 +45,24 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                var user = await _dbContext.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
                 if (user == null)
                 {
                     return NotFound("User not found");
                 }
 
+                var familyMembersToDelete = _dbContext.FamilyMembers.Where(fm => fm.UserId == userId);
+                _dbContext.FamilyMembers.RemoveRange(familyMembersToDelete);
+
+                var expensesToDelete = _dbContext.Expenses.Where(e => e.FamilyMember.UserId == userId);
+                _dbContext.Expenses.RemoveRange(expensesToDelete);
+
+                var incomesToDelete = _dbContext.Incomes.Where(i => i.FamilyMember.UserId == userId);
+                _dbContext.Incomes.RemoveRange(incomesToDelete);
+
                 _dbContext.Users.Remove(user);
+
                 await _dbContext.SaveChangesAsync();
 
                 return Ok("User deleted successfully.");
@@ -62,5 +72,6 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while deleting users: {ex.Message}");
             }
         }
+
     }
 }

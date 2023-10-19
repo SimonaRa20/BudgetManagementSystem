@@ -5,9 +5,9 @@ using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
 using BudgetManagementSystem.Api.Contracts.Members;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -30,12 +30,20 @@ namespace BudgetManagementSystem.Api.Controllers
 
             if (familyExists)
             {
-                return BadRequest($"Family with name '{familyRequest.Title}' was found.");
+                string errors = $"Family with name '{familyRequest.Title}' was found.";
+                return new ObjectResult(errors)
+                {
+                    StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                };
             }
 
             if (familyRequest == null || string.IsNullOrWhiteSpace(familyRequest.Title))
             {
-                return BadRequest("Family title is required.");
+                string errors = "Family title is required.";
+                return new ObjectResult(errors)
+                {
+                    StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                };
             }
 
             try
@@ -177,7 +185,11 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 if (updateRequest == null)
                 {
-                    return BadRequest("Invalid update request.");
+                    string errors = "Invalid update request.";
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 var existingFamily = await _dbContext.Families.Include(f => f.FamilyMembers)

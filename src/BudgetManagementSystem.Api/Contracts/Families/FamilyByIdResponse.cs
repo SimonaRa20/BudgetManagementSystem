@@ -1,5 +1,4 @@
 ﻿using BudgetManagementSystem.Api.Contracts.Members;
-using BudgetManagementSystem.Api.Models;
 
 namespace BudgetManagementSystem.Api.Contracts.Families
 {

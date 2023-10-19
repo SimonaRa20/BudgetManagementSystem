@@ -6,7 +6,6 @@ using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -114,6 +113,16 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found in this family.");
                 }
 
+                var expensesToDelete = _dbContext.Expenses
+                    .Where(e => e.FamilyMemberId == userToDelete.Id);
+
+                _dbContext.Expenses.RemoveRange(expensesToDelete);
+
+                var incomesToDelete = _dbContext.Incomes
+                    .Where(i => i.FamilyMemberId == userToDelete.Id);
+
+                _dbContext.Incomes.RemoveRange(incomesToDelete);
+
                 family.FamilyMembers.Remove(userToDelete);
 
                 await _dbContext.SaveChangesAsync();
@@ -126,9 +135,10 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
+
         [HttpPut("{memberId}")]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> UpdateUserInFamily(int familyId, int memberId, [FromBody] MemberType type)
+        public async Task<IActionResult> UpdateMemberInFamily(int familyId, int memberId, [FromBody] MemberType type)
         {
             try
             {
@@ -176,13 +186,17 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> AddMemberToFamily([FromBody]int userId, int familyId)
+        public async Task<IActionResult> AddMemberToFamily([FromBody] int userId, int familyId)
         {
             try
             {
                 if (userId <= 0)
                 {
-                    return BadRequest("Invalid user id.");
+                    string errors = "Invalid user id.";
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 var existingFamily = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
@@ -213,7 +227,21 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 existingFamily.FamilyMembers.Add(familyMember);
 
-                return Ok(existingFamily);
+                var response = new FamilyByIdResponse
+                {
+                    Id = existingFamily.Id,
+                    Title = existingFamily.Title,
+                    Members = existingFamily.FamilyMembers.Select(fm => new Member
+                    {
+                        FamilyMemberId = fm.Id,
+                        Name = fm.User.Name,
+                        Surname = fm.User.Surname,
+                        UserName = fm.User.UserName,
+                        Email = fm.User.Email
+                    }).ToList()
+                };
+
+                return Created("", response);
             }
             catch (Exception ex)
             {

@@ -11,7 +11,6 @@ namespace BudgetManagementSystem.Api.Models
         public string? Description { get; set; }
         public DateTime Time { get; set; }
 
-        // Foreign key to represent the user who incurred the expense
         public int FamilyMemberId { get; set; }
         public FamilyMemberDto FamilyMember { get; set; }
     }
