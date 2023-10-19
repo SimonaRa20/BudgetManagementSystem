@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetManagementSystem.Api.Migrations
 {
     [DbContext(typeof(BudgetManagementSystemDbContext))]
-    [Migration("20231013115721_CreateDatabaseTables")]
+    [Migration("20231019112954_CreateDatabaseTables")]
     partial class CreateDatabaseTables
     {
         /// <inheritdoc />
