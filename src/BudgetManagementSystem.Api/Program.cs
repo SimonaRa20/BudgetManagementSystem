@@ -6,6 +6,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Hellang.Middleware.ProblemDetails;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<BudgetManagementSystemDbContext>(db => db.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddHealthChecks();
+builder.Services.AddProblemDetails(options => options.IncludeExceptionDetails = (_,_) => true);
 
 var app = builder.Build();
 
@@ -71,12 +73,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("Test");
+app.UseProblemDetails();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHealthChecks("/health");
-
 app.MapControllers();
 
 app.Run();
