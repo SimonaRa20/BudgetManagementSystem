@@ -88,7 +88,16 @@ namespace BudgetManagementSystem.Api.Controllers
                 _dbContext.Users.Add(userDto);
                 await _dbContext.SaveChangesAsync();
 
-                return Created("", userDto);
+                var userResponse = new UserResponse
+                {
+                    Id = userDto.Id,
+                    Name = userDto.Name,
+                    Surname = userDto.Surname,
+                    UserName = userDto.UserName,
+                    Email = userDto.Email
+                };
+
+                return Created("", userResponse);
             }
             catch (Exception ex)
             {

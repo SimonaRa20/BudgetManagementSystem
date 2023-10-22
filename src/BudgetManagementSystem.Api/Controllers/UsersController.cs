@@ -1,4 +1,5 @@
 ﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Auth;
 using BudgetManagementSystem.Api.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,8 +31,17 @@ namespace BudgetManagementSystem.Api.Controllers
                 {
                     return NotFound("Users not found");
                 }
-                
-                return Ok(users);
+
+                var userResponses = users.Select(userDto => new UserResponse
+                {
+                    Id = userDto.Id,
+                    Name = userDto.Name,
+                    Surname = userDto.Surname,
+                    UserName = userDto.UserName,
+                    Email = userDto.Email
+                }).ToList();
+
+                return Ok(userResponses);
             }
             catch (Exception ex)
             {
