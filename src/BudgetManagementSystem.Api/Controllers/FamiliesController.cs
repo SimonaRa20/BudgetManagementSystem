@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using BudgetManagementSystem.Api.Contracts.Members;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Claims;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -26,6 +27,15 @@ namespace BudgetManagementSystem.Api.Controllers
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> CreateFamily(FamilyCreateRequest familyRequest)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
+
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+
             var familyExists = await _dbContext.Families.AnyAsync(f => f.Title == familyRequest.Title);
 
             if (familyExists)
@@ -55,9 +65,25 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 _dbContext.Families.Add(family);
 
+                var familyMember = new FamilyMemberDto
+                {
+                    Family = family,
+                    User = user,
+                    Type = MemberType.Other
+                };
+
+                _dbContext.FamilyMembers.Add(familyMember);
+
                 await _dbContext.SaveChangesAsync();
 
-                return Created("", family);
+                var familyResponse = new FamilyResponse
+                {
+                    Id = family.Id,
+                    Title = family.Title,
+                    MembersCount = family.FamilyMembers.Count
+                };
+
+                return Created("", familyResponse);
             }
             catch (Exception ex)
             {
@@ -69,16 +95,19 @@ namespace BudgetManagementSystem.Api.Controllers
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilies()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
                 ICollection<FamilyResponse> families = await _dbContext.Families
+                    .Where(f => f.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId)))
                     .Select(f => new FamilyResponse
                     {
                         Id = f.Id,
                         Title = f.Title,
                         MembersCount = f.FamilyMembers.Count
-
-                    }).ToListAsync();
+                    })
+                    .ToListAsync();
 
                 if (families == null || !families.Any())
                 {
@@ -97,9 +126,13 @@ namespace BudgetManagementSystem.Api.Controllers
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetFamilyById(int id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(x => x.Id == id);
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == id && f.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId)));
 
                 if (family == null)
                 {
@@ -133,11 +166,12 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-
         [HttpDelete("{id}")]
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> DeleteFamily(int id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
                 var family = await _dbContext.Families
@@ -149,43 +183,44 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var members = family.FamilyMembers.Count();
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-                if (members > 0)
+                if (userRole == Role.Owner || family.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId)))
                 {
-                    return BadRequest($"Family has members. Family cannot be deleted");
+                    var members = family.FamilyMembers.Count;
+
+                    if (members > 0)
+                    {
+                        return BadRequest("Family has members. Family cannot be deleted");
+                    }
+
+                    _dbContext.Families.Remove(family);
+                    await _dbContext.SaveChangesAsync();
+
+                    return Ok("Family deleted successfully.");
                 }
-
-
-                _dbContext.Families.Remove(family);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok("Family deleted successfully.");
+                else
+                {
+                    return Forbid();
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest($"An error occurred while deleting the user: {ex.Message}");
+                return BadRequest($"An error occurred while deleting the family: {ex.Message}");
             }
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> UpdateFamily(int id, FamilyCreateRequest updateRequest)
+        public async Task<IActionResult> UpdateFamily(int id, [FromBody] FamilyCreateRequest updateRequest)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
                 if (id <= 0)
                 {
                     string errors = "Invalid family id.";
-                    return new ObjectResult(errors)
-                    {
-                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
-                    };
-                }
-
-                if (updateRequest == null)
-                {
-                    string errors = "Invalid update request.";
                     return new ObjectResult(errors)
                     {
                         StatusCode = (int)HttpStatusCode.UnprocessableEntity
@@ -200,20 +235,48 @@ namespace BudgetManagementSystem.Api.Controllers
                     return BadRequest("Family not found.");
                 }
 
-                if (string.IsNullOrWhiteSpace(updateRequest.Title))
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+                if (userRole == Role.Owner || existingFamily.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId)))
                 {
-                    string errors = "Title cannot be empty.";
-                    return new ObjectResult(errors)
+                    if (string.IsNullOrWhiteSpace(updateRequest.Title))
                     {
-                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                        string errors = "Title cannot be empty.";
+                        return new ObjectResult(errors)
+                        {
+                            StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                        };
+                    }
+
+                    existingFamily.Title = updateRequest.Title;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    var familyMembers = await _dbContext.FamilyMembers
+                    .Where(fm => fm.FamilyId == id)
+                    .Select(fm => new Member
+                    {
+                        FamilyMemberId = fm.Id,
+                        Name = fm.User.Name,
+                        Surname = fm.User.Surname,
+                        UserName = fm.User.UserName,
+                        Email = fm.User.Email
+                    })
+                    .ToListAsync();
+
+                    var familyUpdated = new FamilyByIdResponse
+                    {
+                        Id = existingFamily.Id,
+                        Title = existingFamily.Title,
+                        Members = familyMembers
                     };
+
+                    return Ok(familyUpdated);
                 }
-
-                existingFamily.Title = updateRequest.Title;
-
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(existingFamily);
+                else
+                {
+                    return Forbid();
+                }
             }
             catch (Exception ex)
             {
