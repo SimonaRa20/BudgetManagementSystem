@@ -4,11 +4,16 @@ using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -32,8 +37,11 @@ namespace BudgetManagementSystem.Api.Controllers
             var user = Authenticate(userLogin);
             if (user != null)
             {
-                var token = GenerateToken(user);
-                var userLoginResponse = LoginResponse(user, token);
+                var accessToken = GenerateAccessToken(user);
+                var refreshToken = GenerateRefreshToken();
+                SaveRefreshToken(user.Id, refreshToken);
+
+                var userLoginResponse = LoginResponse(user, accessToken, refreshToken);
                 return Created("", userLoginResponse);
             }
 
@@ -105,13 +113,32 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
-        private UserLoginResponse LoginResponse(UserDto user, string token)
+        [Route("RefreshToken")]
+        [HttpPost]
+        public ActionResult RefreshToken([FromBody] RefreshTokenRequest refreshTokenRequest)
         {
-            UserLoginResponse response = new(user.Id, user.UserName, user.Role, token);
+            var user = GetUserByRefreshToken(refreshTokenRequest.RefreshToken);
+            if (user != null)
+            {
+                var accessToken = GenerateAccessToken(user);
+                return Created("",new { AccessToken = accessToken });
+            }
+
+            string errors = "Invalid or expired refresh token.";
+
+            return new ObjectResult(errors)
+            {
+                StatusCode = (int)HttpStatusCode.UnprocessableEntity
+            };
+        }
+
+        private UserLoginResponse LoginResponse(UserDto user, string accessToken, string refreshToken)
+        {
+            UserLoginResponse response = new(user.Id, user.UserName, user.Role, accessToken, refreshToken);
             return response;
         }
 
-        private string GenerateToken(UserDto user)
+        private string GenerateAccessToken(UserDto user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -123,7 +150,7 @@ namespace BudgetManagementSystem.Api.Controllers
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddHours(2), // Token expiration time
                 claims: claims,
                 signingCredentials: credentials);
 
@@ -180,6 +207,46 @@ namespace BudgetManagementSystem.Api.Controllers
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
             return hashedPassword;
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        private void SaveRefreshToken(int userId, string refreshToken)
+        {
+            var existingRefreshToken = _dbContext.RefreshTokens.FirstOrDefault(rt => rt.UserId == userId);
+
+            if (existingRefreshToken != null)
+            {
+                _dbContext.RefreshTokens.Remove(existingRefreshToken);
+            }
+
+            var newRefreshToken = new RefreshTokenDto
+            {
+                UserId = userId,
+                Token = refreshToken,
+                ExpiryDate = DateTime.Now.AddDays(1)
+            };
+
+            _dbContext.RefreshTokens.Add(newRefreshToken);
+            _dbContext.SaveChanges();
+        }
+
+        private UserDto GetUserByRefreshToken(string refreshToken)
+        {
+            var user = _dbContext.Users
+                .Join(_dbContext.RefreshTokens, u => u.Id, rt => rt.UserId, (u, rt) => new { u, rt })
+                .FirstOrDefault(joined => joined.rt.Token == refreshToken && joined.rt.ExpiryDate > DateTime.Now)
+                ?.u;
+
+            return user;
         }
     }
 }

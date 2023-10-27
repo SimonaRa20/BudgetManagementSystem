@@ -15,6 +15,8 @@ namespace BudgetManagementSystem.Api.Database
         public DbSet<FamilyMemberDto> FamilyMembers { get; set; }
         public DbSet<IncomeDto> Incomes { get; set; }
         public DbSet<ExpenseDto> Expenses { get; set; }
+        public DbSet<RefreshTokenDto> RefreshTokens { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

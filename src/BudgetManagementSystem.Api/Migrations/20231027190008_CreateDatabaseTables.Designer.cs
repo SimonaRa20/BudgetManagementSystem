@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetManagementSystem.Api.Migrations
 {
     [DbContext(typeof(BudgetManagementSystemDbContext))]
-    [Migration("20231019112954_CreateDatabaseTables")]
+    [Migration("20231027190008_CreateDatabaseTables")]
     partial class CreateDatabaseTables
     {
         /// <inheritdoc />
@@ -132,6 +132,29 @@ namespace BudgetManagementSystem.Api.Migrations
                     b.HasIndex("FamilyMemberId");
 
                     b.ToTable("Incomes");
+                });
+
+            modelBuilder.Entity("BudgetManagementSystem.Api.Models.RefreshTokenDto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.UserDto", b =>

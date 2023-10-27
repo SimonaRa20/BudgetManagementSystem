@@ -131,6 +131,29 @@ namespace BudgetManagementSystem.Api.Migrations
                     b.ToTable("Incomes");
                 });
 
+            modelBuilder.Entity("BudgetManagementSystem.Api.Models.RefreshTokenDto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("BudgetManagementSystem.Api.Models.UserDto", b =>
                 {
                     b.Property<int>("Id")
