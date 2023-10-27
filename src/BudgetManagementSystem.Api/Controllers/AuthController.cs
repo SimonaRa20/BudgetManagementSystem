@@ -120,10 +120,11 @@ namespace BudgetManagementSystem.Api.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role)
             };
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
-                claims,
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 expires: DateTime.Now.AddHours(2),
+                claims: claims,
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
