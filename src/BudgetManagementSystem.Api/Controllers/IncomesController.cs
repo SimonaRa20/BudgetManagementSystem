@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Security.Claims;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
@@ -26,13 +27,25 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                var user = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -66,13 +79,25 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                var user = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -144,25 +169,40 @@ namespace BudgetManagementSystem.Api.Controllers
             }
         }
 
+
         [HttpGet("{incomeId}")]
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> GetIncomeById(int familyId, int memberId, int incomeId)
         {
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                var user = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                var income = await _dbContext.Incomes.FirstOrDefaultAsync(i => i.Id == incomeId && i.FamilyMemberId == memberId);
+                var income = await _dbContext.Incomes
+                    .FirstOrDefaultAsync(i => i.Id == incomeId && i.FamilyMemberId == memberId);
+
                 if (income == null)
                 {
                     return NotFound("Income not found.");
@@ -185,19 +225,33 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while fetching the income: {ex.Message}");
             }
         }
+
+
         [HttpPut("{incomeId}")]
         [Authorize(Roles = Role.Owner)]
         public async Task<IActionResult> UpdateIncome(int familyId, int memberId, int incomeId, IncomeCreateRequest incomeUpdate)
         {
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+            .Include(f => f.FamilyMembers)
+            .FirstOrDefaultAsync(f => f.Id == familyId);
+
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                var user = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -207,6 +261,11 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (income == null)
                 {
                     return NotFound("Income not found.");
+                }
+
+                if (loggedUserId != income.FamilyMember.UserId)
+                {
+                    return Forbid("You don't have permission to update this income.");
                 }
 
                 var errors = new List<string>();
@@ -276,13 +335,25 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
-                var family = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+            .Include(f => f.FamilyMembers)
+            .FirstOrDefaultAsync(f => f.Id == familyId);
+
                 if (family == null)
                 {
                     return NotFound("Family not found.");
                 }
 
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == memberId);
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                var user = await _dbContext.FamilyMembers.FirstOrDefaultAsync(u => u.Id == memberId);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -292,6 +363,11 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (income == null)
                 {
                     return NotFound("Income not found.");
+                }
+
+                if (loggedUserId != income.FamilyMember.UserId)
+                {
+                    return Forbid("You don't have permission to delete this income.");
                 }
 
                 _dbContext.Incomes.Remove(income);
