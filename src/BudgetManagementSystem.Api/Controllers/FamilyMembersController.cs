@@ -75,6 +75,24 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+                   .Include(f => f.FamilyMembers)
+                   .FirstOrDefaultAsync(f => f.Id == familyId);
+
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
                 var familyMember = await _dbContext.FamilyMembers
                     .Where(fm => fm.FamilyId == familyId && fm.Id == memberId)
                     .Include(fm => fm.User)
@@ -108,6 +126,8 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
                 var family = await _dbContext.Families
                     .Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == familyId);
@@ -115,6 +135,13 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (family == null)
                 {
                     return NotFound("Family not found.");
+                }
+
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
                 }
 
                 var userToDelete = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
@@ -152,6 +179,8 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
                 List<string> errors = new List<string>();
 
                 if (!Enum.IsDefined(typeof(MemberType), type))
@@ -166,6 +195,13 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (family == null)
                 {
                     errors.Add("Family not found.");
+                }
+
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
                 }
 
                 var userToUpdate = family.FamilyMembers.FirstOrDefault(u => u.Id == memberId);
@@ -200,20 +236,28 @@ namespace BudgetManagementSystem.Api.Controllers
         {
             try
             {
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
                 if (userId <= 0)
                 {
-                    string errors = "Invalid user id.";
-                    return new ObjectResult(errors)
-                    {
-                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
-                    };
+                    return BadRequest("Invalid user id.");
                 }
 
-                var existingFamily = await _dbContext.Families.FirstOrDefaultAsync(f => f.Id == familyId);
+                var existingFamily = await _dbContext.Families
+                    .Include(f => f.FamilyMembers) // Include FamilyMembers
+                    .ThenInclude(fm => fm.User) // Include User within FamilyMembers
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
 
                 if (existingFamily == null)
                 {
-                    return BadRequest("Family not found.");
+                    return NotFound("Family not found.");
+                }
+
+                var isLoggedUserFamilyMember = existingFamily.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
                 }
 
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -221,6 +265,16 @@ namespace BudgetManagementSystem.Api.Controllers
                 if (user == null)
                 {
                     return BadRequest("User not found.");
+                }
+
+                var isUserAlreadyInFamily = existingFamily.FamilyMembers.Any(fm => fm.UserId == userId);
+
+                if (isUserAlreadyInFamily)
+                {
+                    return new ObjectResult("This user is already a member of the family.")
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
 
                 var familyMember = new FamilyMemberDto
@@ -234,8 +288,6 @@ namespace BudgetManagementSystem.Api.Controllers
                 _dbContext.FamilyMembers.Add(familyMember);
 
                 await _dbContext.SaveChangesAsync();
-
-                existingFamily.FamilyMembers.Add(familyMember);
 
                 var response = new FamilyByIdResponse
                 {
