@@ -2,6 +2,7 @@
 using BudgetManagementSystem.Api.Contracts.Auth;
 using BudgetManagementSystem.Api.Database;
 using BudgetManagementSystem.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -130,6 +131,43 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 StatusCode = (int)HttpStatusCode.UnprocessableEntity
             };
+        }
+
+        [Route("Logout")]
+        [HttpPost]
+        [Authorize] // Add the [Authorize] attribute to secure the endpoint
+        public ActionResult Logout()
+        {
+            try
+            {
+                // Get the current user's claims, including the userId
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest("User not authenticated.");
+                }
+
+                // Remove the user's refresh token from the database
+                RemoveRefreshToken(int.Parse(userId));
+
+                return Ok("Logged out successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while logging out.");
+            }
+        }
+
+        private void RemoveRefreshToken(int userId)
+        {
+            var existingRefreshToken = _dbContext.RefreshTokens.FirstOrDefault(rt => rt.UserId == userId);
+
+            if (existingRefreshToken != null)
+            {
+                _dbContext.RefreshTokens.Remove(existingRefreshToken);
+                _dbContext.SaveChanges();
+            }
         }
 
         private UserLoginResponse LoginResponse(UserDto user, string accessToken, string refreshToken)
