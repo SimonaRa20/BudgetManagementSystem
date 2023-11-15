@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { User } from './interfaces';
 import { API_BASE_URL } from '../apiConfig';
 
 const Register: React.FC = () => {
-  const navigate = useNavigate(); // useNavigate replaces useHistory
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [username, setUsername] = useState('');
@@ -25,9 +25,8 @@ const Register: React.FC = () => {
         password,
       });
 
-      // Handle the response, e.g., navigate to login page
       console.log(response.data);
-      navigate('/login'); // use navigate instead of history.push
+      navigate('/login');
     } catch (error: any) {
       console.error('Registration failed:', (error.response?.data as string) || error.message);
       setError((error.response?.data as string) || error.message);

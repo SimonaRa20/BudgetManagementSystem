@@ -1,10 +1,10 @@
 export interface User {
     id: number;
-    name: string;
-    surname: string;
-    email: string;
+    userName: string;
+    userRole: string;
+    userToken: string;
+    refreshToken: string;
   }
-  
   export interface Family {
     id: number;
     title: string;

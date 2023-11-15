@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { User } from './interfaces';
+import { useAuth } from './context/AuthContext';
 import { API_BASE_URL } from '../apiConfig';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const loginEndpoint = `${API_BASE_URL}/api/Auth/Login`;
-  
+
   const handleLogin = async () => {
     try {
       const response = await axios.post<User>(loginEndpoint, {
@@ -16,8 +20,17 @@ const Login: React.FC = () => {
         password,
       });
 
-      // Handle the response, e.g., store user data in state or local storage
-      console.log(response.data);
+      const { id, userName, userRole, userToken, refreshToken } = response.data;
+
+      localStorage.setItem('userId', id.toString());
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('role', userRole);
+      localStorage.setItem('token', userToken);
+      localStorage.setItem('refreshtoken', refreshToken);
+
+      login();
+      navigate('/families');
+      
     } catch (error: any) {
       console.error('Login failed:', (error.response?.data as string) || error.message);
     }

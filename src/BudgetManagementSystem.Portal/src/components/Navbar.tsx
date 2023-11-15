@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
@@ -13,11 +12,14 @@ const Navbar: React.FC = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           My App
         </Typography>
-        {isAuthenticated ? (
-          <Button color="inherit" onClick={logout}>
-            Logout
+
+        {isAuthenticated && (
+          <Button color="inherit" component={Link} to="/families">
+            Families
           </Button>
-        ) : (
+        )}
+
+        {!isAuthenticated && (
           <>
             <Button color="inherit" component={Link} to="/login">
               Login
@@ -27,9 +29,12 @@ const Navbar: React.FC = () => {
             </Button>
           </>
         )}
-        <Button color="inherit" component={Link} to="/families">
-          Families
-        </Button>
+
+        {isAuthenticated && (
+          <Button color="inherit" onClick={logout}>
+            Logout
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

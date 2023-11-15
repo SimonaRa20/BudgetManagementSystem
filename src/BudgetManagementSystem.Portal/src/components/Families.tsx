@@ -1,4 +1,3 @@
-// src/components/Families.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Container, Typography } from '@mui/material';
@@ -14,7 +13,7 @@ const Families: React.FC = () => {
     const fetchFamilies = async () => {
       try {
         const response = await axios.get<Family[]>(getFamiliesEndpoint, {
-          // Add headers with authentication token if needed
+          
         });
 
         setFamilies(response.data);

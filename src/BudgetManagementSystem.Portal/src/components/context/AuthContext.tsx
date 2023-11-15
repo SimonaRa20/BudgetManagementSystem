@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AuthContextProps {
@@ -17,13 +16,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = () => {
-    // Perform your login logic here
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    // Perform your logout logic here
     setIsAuthenticated(false);
+    localStorage.clear();
+
   };
 
   return (
