@@ -20,14 +20,14 @@ const Login: React.FC = () => {
         password,
       });
 
-      const { id, userName, userRole, userToken, refreshToken } = response.data;
+      const { id, userName, role, token, refreshToken } = response.data;
 
-      localStorage.setItem('userId', id.toString());
-      localStorage.setItem('userName', userName);
-      localStorage.setItem('role', userRole);
-      localStorage.setItem('token', userToken);
-      localStorage.setItem('refreshtoken', refreshToken);
 
+    localStorage.setItem('userId', id.toString());
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshtoken', refreshToken);
       login();
       navigate('/families');
       
