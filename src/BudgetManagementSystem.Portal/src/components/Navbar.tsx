@@ -1,10 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { useAuth } from './context/AuthContext';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <AppBar position="static">
@@ -31,7 +37,7 @@ const Navbar: React.FC = () => {
         )}
 
         {isAuthenticated && (
-          <Button color="inherit" onClick={logout}>
+          <Button color="inherit" onClick={handleLogout}>
             Logout
           </Button>
         )}

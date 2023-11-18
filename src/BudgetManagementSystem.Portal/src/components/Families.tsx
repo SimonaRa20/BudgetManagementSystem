@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
-} from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Box, Grid, Card, CardContent, Typography, Button, Container, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import {  useNavigate } from 'react-router-dom';
 import { Family } from './interfaces';
 import { useAuth } from './context/AuthContext';
 import { API_BASE_URL } from '../apiConfig';
@@ -50,7 +37,7 @@ const Families: React.FC = () => {
     if (isAuthenticated) {
       fetchFamilies();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, getFamiliesEndpoint]);
 
   const handleDetailsClick = (familyId: number) => {
     navigate(`/family/${familyId}`);
@@ -80,7 +67,6 @@ const Families: React.FC = () => {
 
       const createdFamily = response.data;
 
-      // Update the local state with the new family
       setFamilies((prevFamilies) => [...prevFamilies, createdFamily]);
 
       handleCloseModal();
@@ -132,7 +118,6 @@ const Families: React.FC = () => {
               </Grid>
             ))}
           </Grid>
-          {/* Add Family Modal */}
           <Dialog open={openModal} onClose={handleCloseModal}>
             <DialogTitle>Create New Family</DialogTitle>
             <DialogContent>

@@ -5,59 +5,75 @@ import { Box, Typography, Card, CardContent } from '@mui/material';
 import { Family } from './interfaces';
 import { API_BASE_URL } from '../apiConfig';
 import { Container } from '@mui/system';
+import { useAuth } from './context/AuthContext';
 
 const FamilyDetails: React.FC = () => {
-    const { familyId } = useParams();
-    const [family, setFamily] = useState<Family | null>(null);
+  const { familyId } = useParams();
+  const [family, setFamily] = useState<Family | null>(null);
+  const { isAuthenticated } = useAuth();
 
-    console.log(familyId)
-    const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
-  
-    useEffect(() => {
-      const fetchFamilyDetails = async () => {
-        try {
-            const token = localStorage.getItem('token');
+  console.log(familyId);
+  const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
+
+  useEffect(() => {
+    const fetchFamilyDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
         const response = await axios.get<Family>(getFamilyEndpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        console.log(response)
+        console.log(response);
 
-          setFamily(response.data);
-        } catch (error: any) {
-          console.error(
-            'Failed to fetch family details:',
-            (error.response?.data as string) || error.message
-          );
-        }
-      };
-  
-      fetchFamilyDetails();
-    }, [familyId]);
+        setFamily(response.data);
+      } catch (error: any) {
+        console.error(
+          'Failed to fetch family details:',
+          (error.response?.data as string) || error.message
+        );
+      }
+    };
+
+    fetchFamilyDetails();
+  }, [familyId, getFamilyEndpoint]);
+
+  if (!isAuthenticated) {
+    return (
+      <Container>
+        <Box style={{ marginTop: '2rem' }}>
+          <Typography variant="h6">
+            Please login to view family details.
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
 
   if (!family) {
-    return <div>Loading...</div>; // You can show a loading indicator while fetching data
+    return <div>Loading...</div>;
   }
 
   return (
     <Container>
-    <Box style={{ marginTop: '2rem' }}>
-      <Typography component="h1" variant="h5">{family.title}</Typography>
-      <Card style={{ marginTop: '16px' }}>
-        <CardContent>
-          <Typography variant="h6">Members:</Typography>
-          {family.members.map((member) => (
-            <div key={member.familyMemberId}>
-              <Typography>{`Name: ${member.name} ${member.surname}`}</Typography>
-              <Typography>{`Username: ${member.userName}`}</Typography>
-              <Typography>{`Email: ${member.email}`}</Typography>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-    </Box>
+      <Box style={{ marginTop: '2rem' }}>
+        <Typography component="h1" variant="h5">
+          {family.title}
+        </Typography>
+        <Card style={{ marginTop: '16px' }}>
+          <CardContent>
+            <Typography variant="h6">Members:</Typography>
+            {family.members.map((member) => (
+              <div key={member.familyMemberId}>
+                <Typography>{`Name: ${member.name} ${member.surname}`}</Typography>
+                <Typography>{`Username: ${member.userName}`}</Typography>
+                <Typography>{`Email: ${member.email}`}</Typography>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </Box>
     </Container>
   );
 };

@@ -15,7 +15,7 @@ export interface User {
     id: number;
     title: string;
     membersCount: number;
-    members: FamilyMember[]; // Add this line
+    members: FamilyMember[];
   }
   
   export interface FamilyMember {
