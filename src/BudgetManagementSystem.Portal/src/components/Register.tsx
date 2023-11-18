@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography } from '@mui/material';
+import { Box,Button, TextField, Container, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { User } from './interfaces';
@@ -35,7 +35,7 @@ const Register: React.FC = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div>
+      <Box style={{ marginTop: '2rem' }}>
         <Typography component="h1" variant="h5">
           Register
         </Typography>
@@ -118,7 +118,7 @@ const Register: React.FC = () => {
             Register
           </Button>
         </form>
-      </div>
+      </Box>
     </Container>
   );
 };

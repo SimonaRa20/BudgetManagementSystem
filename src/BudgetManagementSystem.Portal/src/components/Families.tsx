@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
+  Box,
   Grid,
   Card,
   CardContent,
@@ -13,11 +14,13 @@ import {
   TextField,
   DialogActions,
 } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import { Family } from './interfaces';
 import { useAuth } from './context/AuthContext';
 import { API_BASE_URL } from '../apiConfig';
 
 const Families: React.FC = () => {
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [families, setFamilies] = useState<Family[]>([]);
   const [openModal, setOpenModal] = useState(false);
@@ -50,8 +53,7 @@ const Families: React.FC = () => {
   }, [isAuthenticated]);
 
   const handleDetailsClick = (familyId: number) => {
-    // Handle the click event, you can navigate to a detailed view or show a modal
-    console.log(`Details button clicked for family with ID ${familyId}`);
+    navigate(`/family/${familyId}`);
   };
 
   const handleOpenModal = () => {
@@ -92,9 +94,13 @@ const Families: React.FC = () => {
 
   return (
     <Container>
+      <Box style={{ marginTop: '2rem' }}>
       {isAuthenticated ? (
         <>
-          <Typography variant="h3">Families</Typography>
+        <Box style={{display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',}}>
+        <Typography component="h1" variant="h5">Families</Typography>
           <Button
             variant="contained"
             color="primary"
@@ -103,6 +109,8 @@ const Families: React.FC = () => {
           >
             Add Family
           </Button>
+        </Box>
+          
           <Grid container spacing={3}>
             {families.map((family) => (
               <Grid item xs={12} sm={6} md={4} key={family.id}>
@@ -117,7 +125,7 @@ const Families: React.FC = () => {
                       color="primary"
                       onClick={() => handleDetailsClick(family.id)}
                     >
-                      Details
+                      Detailed info
                     </Button>
                   </CardContent>
                 </Card>
@@ -149,6 +157,7 @@ const Families: React.FC = () => {
           Please login to view families.
         </Typography>
       )}
+      </Box>
     </Container>
   );
 };

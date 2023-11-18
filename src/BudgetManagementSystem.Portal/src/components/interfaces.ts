@@ -10,3 +10,18 @@ export interface User {
     title: string;
     membersCount: number;
   }
+
+  export interface Family {
+    id: number;
+    title: string;
+    membersCount: number;
+    members: FamilyMember[]; // Add this line
+  }
+  
+  export interface FamilyMember {
+    familyMemberId: number;
+    name: string;
+    surname: string;
+    userName: string;
+    email: string;
+  }

@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Register from './components/Register';
 import Families from './components/Families';
+import FamilyDetails from './components/FamilyDetails';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/families" element={<Families />} />
+            <Route path="/family/:familyId" element={<FamilyDetails />} />
           </Routes>
         </div>
       </Router>
