@@ -39,7 +39,7 @@ const Login: React.FC = () => {
   return (
     <Container component="main" maxWidth="xs">
       <Box style={{ marginTop: '2rem' }}>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>
           Login
         </Typography>
         <form>
@@ -55,6 +55,7 @@ const Login: React.FC = () => {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            sx={{fontFamily: "'Poppins', sans-serif"}}
           />
           <TextField
             variant="outlined"
@@ -68,6 +69,7 @@ const Login: React.FC = () => {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            sx={{fontFamily: "'Poppins', sans-serif"}}
           />
           <Button
             type="button"
@@ -75,6 +77,7 @@ const Login: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleLogin}
+            sx={{fontFamily: "'Poppins', sans-serif"}}
           >
             Login
           </Button>

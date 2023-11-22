@@ -86,12 +86,13 @@ const Families: React.FC = () => {
         <Box style={{display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',}}>
-        <Typography component="h1" variant="h5">Families</Typography>
+        <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>Families</Typography>
           <Button
             variant="contained"
             color="primary"
             style={{ marginBottom: '16px' }}
             onClick={handleOpenModal}
+            sx={{fontFamily: "'Poppins', sans-serif"}}
           >
             Add Family
           </Button>
@@ -102,14 +103,15 @@ const Families: React.FC = () => {
               <Grid item xs={12} sm={6} md={4} key={family.id}>
                 <Card style={{ marginBottom: '16px' }}>
                   <CardContent>
-                    <Typography variant="h5">{family.title}</Typography>
-                    <Typography color="textSecondary">
+                    <Typography variant="h5"sx={{fontFamily: "'Poppins', sans-serif"}}>{family.title}</Typography>
+                    <Typography color="textSecondary" sx={{fontFamily: "'Poppins', sans-serif"}}>
                       Members: {family.membersCount}
                     </Typography>
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={() => handleDetailsClick(family.id)}
+                      sx={{fontFamily: "'Poppins', sans-serif"}}
                     >
                       Detailed info
                     </Button>
@@ -119,7 +121,7 @@ const Families: React.FC = () => {
             ))}
           </Grid>
           <Dialog open={openModal} onClose={handleCloseModal}>
-            <DialogTitle>Create New Family</DialogTitle>
+            <DialogTitle sx={{fontFamily: "'Poppins', sans-serif"}}>Create New Family</DialogTitle>
             <DialogContent>
               <TextField
                 label="Family Title"
@@ -127,18 +129,19 @@ const Families: React.FC = () => {
                 fullWidth
                 value={newFamilyTitle}
                 onChange={(e) => setNewFamilyTitle(e.target.value)}
+                sx={{fontFamily: "'Poppins', sans-serif"}}
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseModal}>Cancel</Button>
-              <Button onClick={handleCreateFamily} color="primary">
+              <Button sx={{fontFamily: "'Poppins', sans-serif"}} onClick={handleCloseModal}>Cancel</Button>
+              <Button sx={{fontFamily: "'Poppins', sans-serif"}} onClick={handleCreateFamily} color="primary">
                 Create
               </Button>
             </DialogActions>
           </Dialog>
         </>
       ) : (
-        <Typography variant="h6">
+        <Typography variant="h6" sx={{fontFamily: "'Poppins', sans-serif"}}>
           Please login to view families.
         </Typography>
       )}

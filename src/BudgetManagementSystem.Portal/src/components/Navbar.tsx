@@ -48,30 +48,30 @@ const Navbar: React.FC = () => {
           </IconButton>
         </Hidden>
 
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontFamily: "'Poppins', sans-serif" }}>
           Budget Management
         </Typography>
 
         <Hidden smDown>
           {isAuthenticated && (
-            <Button color="inherit" component={Link} to="/families">
+            <Button color="inherit" component={Link} to="/families" sx={{fontFamily: "'Poppins', sans-serif"}}>
               Families
             </Button>
           )}
 
           {!isAuthenticated && (
             <>
-              <Button color="inherit" component={Link} to="/login">
+              <Button color="inherit" component={Link} sx={{fontFamily: "'Poppins', sans-serif"}} to="/login">
                 Login
               </Button>
-              <Button color="inherit" component={Link} to="/register">
+              <Button color="inherit" component={Link} sx={{fontFamily: "'Poppins', sans-serif"}} to="/register">
                 Register
               </Button>
             </>
           )}
 
           {isAuthenticated && (
-            <Button color="inherit" onClick={handleLogout}>
+            <Button color="inherit" sx={{fontFamily: "'Poppins', sans-serif"}} onClick={handleLogout}>
               Logout
             </Button>
           )}
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
           open={drawerOpen}
           onClose={toggleDrawer(false)}
         >
-          <Typography variant="h6" component="div" sx={{ textAlign: 'center', paddingY: '2rem', flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ textAlign: 'center',fontFamily: "'Poppins', sans-serif", paddingY: '2rem', flexGrow: 1 }}>
             Budget Management
           </Typography>
           <Divider />
@@ -91,11 +91,11 @@ const Navbar: React.FC = () => {
               {isAuthenticated && (
                 <>
                   <ListItem button component={Link} to="/families">
-                    <ListItemText primary="Families" />
+                    <ListItemText primary="Families" sx={{fontFamily: "'Poppins', sans-serif"}} />
                   </ListItem>
                   <Divider />
                   <ListItem button onClick={handleLogout}>
-                    <ListItemText primary="Logout" />
+                    <ListItemText primary="Logout" sx={{fontFamily: "'Poppins', sans-serif"}} />
                   </ListItem>
                 </>
               )}
@@ -103,11 +103,11 @@ const Navbar: React.FC = () => {
               {!isAuthenticated && (
                 <>
                   <ListItem button component={Link} to="/login">
-                    <ListItemText primary="Login" />
+                    <ListItemText primary="Login" sx={{fontFamily: "'Poppins', sans-serif"}} />
                   </ListItem>
                   <Divider />
                   <ListItem button component={Link} to="/register">
-                    <ListItemText primary="Register" />
+                    <ListItemText primary="Register" sx={{fontFamily: "'Poppins', sans-serif"}} />
                   </ListItem>
                 </>
               )}

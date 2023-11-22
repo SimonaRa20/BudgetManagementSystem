@@ -12,7 +12,6 @@ const FamilyDetails: React.FC = () => {
   const [family, setFamily] = useState<Family | null>(null);
   const { isAuthenticated } = useAuth();
 
-  console.log(familyId);
   const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
 
   useEffect(() => {
@@ -24,8 +23,6 @@ const FamilyDetails: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        console.log(response);
 
         setFamily(response.data);
       } catch (error: any) {
@@ -58,17 +55,17 @@ const FamilyDetails: React.FC = () => {
   return (
     <Container>
       <Box style={{ marginTop: '2rem' }}>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>
           {family.title}
         </Typography>
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
-            <Typography variant="h6">Members:</Typography>
+            <Typography variant="h6" sx={{fontFamily: "'Poppins', sans-serif"}}>Members:</Typography>
             {family.members.map((member) => (
               <div key={member.familyMemberId}>
-                <Typography>{`Name: ${member.name} ${member.surname}`}</Typography>
-                <Typography>{`Username: ${member.userName}`}</Typography>
-                <Typography>{`Email: ${member.email}`}</Typography>
+                <Typography sx={{fontFamily: "'Poppins', sans-serif"}}>{`Name: ${member.name} ${member.surname}`}</Typography>
+                <Typography sx={{fontFamily: "'Poppins', sans-serif"}}>{`Username: ${member.userName}`}</Typography>
+                <Typography sx={{fontFamily: "'Poppins', sans-serif"}}>{`Email: ${member.email}`}</Typography>
               </div>
             ))}
           </CardContent>
