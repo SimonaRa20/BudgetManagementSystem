@@ -27,7 +27,6 @@ const Families: React.FC = () => {
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [updateFamilyId, setUpdateFamilyId] = useState<number | null>(null);
 
-
   const getFamiliesEndpoint = `${API_BASE_URL}/api/Families`;
 
   useEffect(() => {
@@ -75,10 +74,28 @@ const Families: React.FC = () => {
     setOpenUpdateModal(false);
   };
 
-  const handleUpdateFamily = (updatedFamily: Family) => {
-    setFamilies((prevFamilies) =>
-      prevFamilies.map((family) => (family.id === updatedFamily.id ? updatedFamily : family))
-    );
+  const handleUpdateFamily = async (updatedFamily: Family) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `${API_BASE_URL}/api/Families/${updatedFamily.id}`,
+        updatedFamily,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setFamilies((prevFamilies) =>
+        prevFamilies.map((family) =>
+          family.id === updatedFamily.id ? { ...family, title: updatedFamily.title } : family
+        )
+      );
+      setOpenUpdateModal(false);
+    } catch (error: any) {
+      console.error('Failed to update family:', error.response?.data || error.message);
+    }
   };
 
   const handleOpenDeleteDialog = (familyId: number) => {
@@ -120,7 +137,7 @@ const Families: React.FC = () => {
                 alignItems: 'center',
               }}
             >
-              <Typography component="h1" variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
+              <Typography component="h1" variant="h5">
                 Families
               </Typography>
               <Button
@@ -128,7 +145,6 @@ const Families: React.FC = () => {
                 color="primary"
                 style={{ marginBottom: '16px' }}
                 onClick={handleOpenCreateModal}
-                sx={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Add Family
               </Button>
@@ -139,18 +155,17 @@ const Families: React.FC = () => {
                 <Grid item xs={12} sm={6} md={4} key={family.id}>
                   <Card style={{ marginBottom: '16px' }}>
                     <CardContent>
-                      <Typography variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
+                      <Typography variant="h5">
                         {family.title}
                       </Typography>
-                      <Typography color="textSecondary" sx={{ fontFamily: "'Poppins', sans-serif" }}>
+                      <Typography color="textSecondary">
                         Members: {family.membersCount}
                       </Typography>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
                         <Button
                           variant="contained"
-                          color="primary"
+                          color="secondary"
                           onClick={() => handleDetailsClick(family.id)}
-                          sx={{ fontFamily: "'Poppins', sans-serif" }}
                         >
                           Detailed info
                         </Button>
@@ -158,17 +173,15 @@ const Families: React.FC = () => {
                           <>
                             <Button
                               variant="contained"
-                              color="primary"
+                              color="warning"
                               onClick={() => handleOpenUpdateModal(family.id)}
-                              sx={{ fontFamily: "'Poppins', sans-serif" }}
                             >
                               Update
                             </Button>
                             <Button
                               variant="contained"
-                              color="secondary"
+                              color="error"
                               onClick={() => handleOpenDeleteDialog(family.id)}
-                              sx={{ fontFamily: "'Poppins', sans-serif" }}
                             >
                               Delete
                             </Button>
@@ -200,7 +213,7 @@ const Families: React.FC = () => {
             />
           </>
         ) : (
-          <Typography variant="h6" sx={{ fontFamily: "'Poppins', sans-serif" }}>
+          <Typography variant="h6">
             Please login to view families.
           </Typography>
         )}

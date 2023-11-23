@@ -99,24 +99,23 @@ const FamilyDetails: React.FC = () => {
   return (
     <Container>
       <Box style={{ marginTop: '2rem' }}>
-        <Typography component="h1" variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
+        <Typography component="h1" variant="h5">
           {family.title}
         </Typography>
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
-            <Typography variant="h6" sx={{ fontFamily: "'Poppins', sans-serif" }}>Members:</Typography>
+            <Typography variant="h6">Members:</Typography>
             {family.members.map((member) => (
-              <div key={member.familyMemberId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography sx={{ fontFamily: "'Poppins', sans-serif" }}>
+              <Box key={member.familyMemberId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography>
                   {`${member.name} ${member.surname}`}
                 </Typography>
                 <Button
                   onClick={() => handleOpenMemberModal(member)}
-                  sx={{ fontFamily: "'Poppins', sans-serif" }}
                 >
                   View Details
                 </Button>
-              </div>
+              </Box>
             ))}
           </CardContent>
         </Card>

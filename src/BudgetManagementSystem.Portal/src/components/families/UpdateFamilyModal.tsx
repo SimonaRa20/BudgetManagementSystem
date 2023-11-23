@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
-  Button
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 import { API_BASE_URL } from '../../apiConfig';
 
 interface UpdateFamilyModalProps {
@@ -50,7 +43,7 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
       }
 
       const token = localStorage.getItem('token');
-      await axios.put(
+      const response = await axios.put(
         `${API_BASE_URL}/api/Families/${familyId}`,
         { title: updatedFamilyTitle },
         {
@@ -60,7 +53,7 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
         }
       );
 
-      onUpdate({ id: familyId, title: updatedFamilyTitle });
+      onUpdate(response.data);
       onClose();
     } catch (error: any) {
       const errorResponse = error.response?.data as string;
