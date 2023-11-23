@@ -173,7 +173,7 @@ const Families: React.FC = () => {
                           <>
                             <Button
                               variant="contained"
-                              color="warning"
+                              color="primary"
                               onClick={() => handleOpenUpdateModal(family.id)}
                             >
                               Update

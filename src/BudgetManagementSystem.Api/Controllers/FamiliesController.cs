@@ -221,6 +221,17 @@ namespace BudgetManagementSystem.Api.Controllers
                     };
                 }
 
+                var familyExists = await _dbContext.Families.AnyAsync(f => f.Id != id && f.Title == updateRequest.Title);
+
+                if (familyExists)
+                {
+                    string errors = $"Family with name '{updateRequest.Title}' was found.";
+                    return new ObjectResult(errors)
+                    {
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
+                }
+
                 var existingFamily = await _dbContext.Families.Include(f => f.FamilyMembers)
                     .FirstOrDefaultAsync(f => f.Id == id);
 
