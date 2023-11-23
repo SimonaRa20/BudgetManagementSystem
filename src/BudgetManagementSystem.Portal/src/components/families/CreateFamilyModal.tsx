@@ -6,8 +6,7 @@ import {
     DialogContent,
     TextField,
     DialogActions,
-    Button,
-    Typography,
+    Button
 } from '@mui/material';
 import { API_BASE_URL } from '../../apiConfig';
 
@@ -53,7 +52,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, on
     const handleClose = () => {
         setNewFamilyTitle('');
         setErrorMessage('');
-        setIsSubmitAttempted(false); // Reset submit attempt status on modal close
+        setIsSubmitAttempted(false);
         onClose();
     };
 

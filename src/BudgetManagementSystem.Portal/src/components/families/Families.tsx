@@ -15,6 +15,7 @@ import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../../apiConfig';
 import CreateFamilyModal from './CreateFamilyModal';
 import DeleteFamilyModal from './DeleteFamilyModal';
+import UpdateFamilyModal from './UpdateFamilyModal';
 
 const Families: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,9 @@ const Families: React.FC = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteFamilyId, setDeleteFamilyId] = useState<number | null>(null);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [updateFamilyId, setUpdateFamilyId] = useState<number | null>(null);
+
 
   const getFamiliesEndpoint = `${API_BASE_URL}/api/Families`;
 
@@ -59,6 +63,22 @@ const Families: React.FC = () => {
 
   const handleCreateFamilySuccess = (createdFamily: Family) => {
     setFamilies((prevFamilies) => [...prevFamilies, createdFamily]);
+  };
+
+  const handleOpenUpdateModal = (familyId: number) => {
+    setUpdateFamilyId(familyId);
+    setOpenUpdateModal(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateFamilyId(null);
+    setOpenUpdateModal(false);
+  };
+
+  const handleUpdateFamily = (updatedFamily: Family) => {
+    setFamilies((prevFamilies) =>
+      prevFamilies.map((family) => (family.id === updatedFamily.id ? updatedFamily : family))
+    );
   };
 
   const handleOpenDeleteDialog = (familyId: number) => {
@@ -135,14 +155,25 @@ const Families: React.FC = () => {
                           Detailed info
                         </Button>
                         {family.membersCount === 1 && (
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={() => handleOpenDeleteDialog(family.id)}
-                            sx={{ fontFamily: "'Poppins', sans-serif" }}
-                          >
-                            Delete
-                          </Button>
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleOpenUpdateModal(family.id)}
+                              sx={{ fontFamily: "'Poppins', sans-serif" }}
+                            >
+                              Update
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => handleOpenDeleteDialog(family.id)}
+                              sx={{ fontFamily: "'Poppins', sans-serif" }}
+                            >
+                              Delete
+                            </Button>
+                          </>
+
                         )}
                       </Box>
                     </CardContent>
@@ -150,7 +181,12 @@ const Families: React.FC = () => {
                 </Grid>
               ))}
             </Grid>
-
+            <UpdateFamilyModal
+              open={openUpdateModal}
+              onClose={handleCloseUpdateModal}
+              onUpdate={handleUpdateFamily}
+              familyId={updateFamilyId}
+            />
             <CreateFamilyModal
               open={openCreateModal}
               onClose={handleCloseCreateModal}
