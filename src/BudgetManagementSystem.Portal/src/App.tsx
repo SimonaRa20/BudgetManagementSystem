@@ -4,7 +4,7 @@ import { AuthProvider } from './components/context/AuthContext';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Register from './components/Register';
-import Families from './components/Families';
+import Families from './components/families/Families';
 import FamilyDetails from './components/FamilyDetails';
 
 const App: React.FC = () => {

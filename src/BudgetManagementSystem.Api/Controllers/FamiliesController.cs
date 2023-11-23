@@ -183,17 +183,10 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family not found.");
                 }
 
-                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var isOnlyMember = family.FamilyMembers.Count == 1 && family.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId));
 
-                if (userRole == Role.Owner || family.FamilyMembers.Any(fm => fm.UserId == int.Parse(userId)))
+                if (isOnlyMember)
                 {
-                    var members = family.FamilyMembers.Count;
-
-                    if (members > 0)
-                    {
-                        return BadRequest("Family has members. Family cannot be deleted");
-                    }
-
                     _dbContext.Families.Remove(family);
                     await _dbContext.SaveChangesAsync();
 
@@ -209,6 +202,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while deleting the family: {ex.Message}");
             }
         }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = Role.Owner)]

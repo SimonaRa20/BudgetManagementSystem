@@ -1,4 +1,5 @@
 ﻿using BudgetManagementSystem.Api.Constants;
+using BudgetManagementSystem.Api.Contracts.Auth;
 using BudgetManagementSystem.Api.Contracts.Families;
 using BudgetManagementSystem.Api.Contracts.Members;
 using BudgetManagementSystem.Api.Database;
@@ -310,5 +311,55 @@ namespace BudgetManagementSystem.Api.Controllers
                 return BadRequest($"An error occurred while updating the family: {ex.Message}");
             }
         }
+
+        [HttpGet("NotInFamily")]
+        [Authorize(Roles = Role.Owner)]
+        public async Task<IActionResult> GetUsersNotInFamily(int familyId)
+        {
+            try
+            {
+                var loggedUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var family = await _dbContext.Families
+                    .Include(f => f.FamilyMembers)
+                    .FirstOrDefaultAsync(f => f.Id == familyId);
+
+                if (family == null)
+                {
+                    return NotFound("Family not found.");
+                }
+
+                var isLoggedUserFamilyMember = family.FamilyMembers.Any(fm => fm.UserId == loggedUserId);
+
+                if (!isLoggedUserFamilyMember)
+                {
+                    return Forbid();
+                }
+
+                // Step 1: Get user IDs already in the family
+                var userIdsInFamily = family.FamilyMembers.Select(fm => fm.UserId);
+
+                // Step 2: Query users whose IDs are not in the family and have the 'Owner' role
+                var usersNotInFamily = await _dbContext.Users
+                    .Where(u => !userIdsInFamily.Contains(u.Id) && u.Role == Role.Owner)
+                    .Select(u => new UserResponse
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Surname = u.Surname,
+                        UserName = u.UserName,
+                        Email = u.Email
+                    })
+                    .ToListAsync();
+
+                return Ok(usersNotInFamily);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while fetching users not in the family: {ex.Message}");
+            }
+        }
+
+
     }
 }
