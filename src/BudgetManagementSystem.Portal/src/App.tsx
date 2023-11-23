@@ -8,6 +8,7 @@ import Families from './components/families/Families';
 import FamilyDetails from './components/FamilyDetails';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
+import Home from './Home';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <div>
             <Navbar />
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/families" element={<Families />} />

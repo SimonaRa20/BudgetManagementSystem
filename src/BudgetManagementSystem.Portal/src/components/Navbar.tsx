@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
         </Hidden>
 
         <Box style={{ flexGrow: 1 }}>
-          <Typography variant="h6" component="div">
+          <Typography variant="h6" component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
             Budget Management
           </Typography>
         </Box>
@@ -72,7 +72,7 @@ const Navbar: React.FC = () => {
           open={drawerOpen}
           onClose={toggleDrawer(false)}
         >
-          <Typography variant="h6" component="div" sx={{ textAlign: 'center', fontFamily: "'Poppins', sans-serif", paddingY: '2rem' }}>
+          <Typography variant="h6" sx={{ textAlign: 'center', fontFamily: "'Poppins', sans-serif", paddingY: '2rem' }} component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
             Budget Management
           </Typography>
           <Divider />
