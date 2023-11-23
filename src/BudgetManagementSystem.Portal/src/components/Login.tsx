@@ -9,6 +9,7 @@ import { API_BASE_URL } from '../apiConfig';
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
   const loginEndpoint = `${API_BASE_URL}/api/Auth/Login`;
@@ -32,7 +33,7 @@ const Login: React.FC = () => {
       navigate('/families');
       
     } catch (error: any) {
-      console.error('Login failed:', (error.response?.data as string) || error.message);
+      setError((error.response?.data as string) || error.message);
     }
   };
 
@@ -42,6 +43,11 @@ const Login: React.FC = () => {
         <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>
           Login
         </Typography>
+        {error && (
+          <Typography color="error" sx={{ marginTop: '0.5rem', fontFamily: "'Poppins', sans-serif" }}>
+            {error}
+          </Typography>
+        )}
         <form>
           <TextField
             variant="outlined"
