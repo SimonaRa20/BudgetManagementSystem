@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
+import { Box, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 import { API_BASE_URL } from '../../apiConfig';
 import { FamilyResponse } from '../models/family';
 
@@ -58,7 +58,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, on
     };
 
     return (
-        <div>
+        <Box>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Create New Family</DialogTitle>
                 <DialogContent>
@@ -82,7 +82,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, on
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

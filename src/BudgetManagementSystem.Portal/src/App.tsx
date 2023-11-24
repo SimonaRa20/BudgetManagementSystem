@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Families from './components/families/Families';
-import FamilyDetails from './components/FamilyDetails';
+import FamilyDetails from './components/members/FamilyDetails';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Home from './Home';

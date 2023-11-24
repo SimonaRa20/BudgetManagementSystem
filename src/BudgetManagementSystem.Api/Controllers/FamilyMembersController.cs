@@ -55,6 +55,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
+                        FamilyId = familyId,
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,
@@ -105,18 +106,19 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family member not found.");
                 }
 
-                    var member = new FamilyMemberResponse
-                    {
-                        FamilyMemberId = familyMember.Id,
-                        Name = familyMember.User.Name,
-                        Surname = familyMember.User.Surname,
-                        UserName = familyMember.User.UserName,
-                        Email = familyMember.User.Email,
-                        Type = familyMember.Type
-                    };
+                var member = new FamilyMemberResponse
+                {
+                    FamilyMemberId = familyMember.Id,
+                    FamilyId = familyMember.FamilyId,
+                    Name = familyMember.User.Name,
+                    Surname = familyMember.User.Surname,
+                    UserName = familyMember.User.UserName,
+                    Email = familyMember.User.Email,
+                    Type = familyMember.Type
+                };
 
-                    return Ok(member);
-                }
+                return Ok(member);
+            }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while fetching the member: {ex.Message}");
@@ -154,22 +156,27 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("User not found in this family.");
                 }
 
-                    var expensesToDelete = _dbContext.Expenses
-                        .Where(e => e.FamilyMemberId == userToDelete.Id);
+                var expensesToDelete = _dbContext.Expenses
+                    .Where(e => e.FamilyMemberId == userToDelete.Id);
 
-                    _dbContext.Expenses.RemoveRange(expensesToDelete);
+                _dbContext.Expenses.RemoveRange(expensesToDelete);
 
-                    var incomesToDelete = _dbContext.Incomes
-                        .Where(i => i.FamilyMemberId == userToDelete.Id);
+                var incomesToDelete = _dbContext.Incomes
+                    .Where(i => i.FamilyMemberId == userToDelete.Id);
 
-                    _dbContext.Incomes.RemoveRange(incomesToDelete);
+                _dbContext.Incomes.RemoveRange(incomesToDelete);
 
-                    family.FamilyMembers.Remove(userToDelete);
+                family.FamilyMembers.Remove(userToDelete);
 
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok("User deleted from the family successfully.");
+                if (family.FamilyMembers.Count == 0)
+                {
+                    _dbContext.Families.Remove(family);
                 }
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("User deleted from the family successfully.");
+            }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while deleting the user: {ex.Message}");
@@ -214,19 +221,19 @@ namespace BudgetManagementSystem.Api.Controllers
                     errors.Add("User not found in this family.");
                 }
 
-                    if (errors.Count > 0)
+                if (errors.Count > 0)
+                {
+                    return new ObjectResult(errors)
                     {
-                        return new ObjectResult(errors)
-                        {
-                            StatusCode = (int)HttpStatusCode.UnprocessableEntity
-                        };
-                    }
-
-                    userToUpdate.Type = type;
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok("User updated in the family successfully.");
+                        StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                    };
                 }
+
+                userToUpdate.Type = type;
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("User updated in the family successfully.");
+            }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred while updating the user: {ex.Message}");
@@ -299,6 +306,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     Members = existingFamily.FamilyMembers.Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
+                        FamilyId = fm.FamilyId,
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,

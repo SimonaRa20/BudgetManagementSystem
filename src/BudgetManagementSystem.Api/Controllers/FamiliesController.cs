@@ -144,6 +144,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
+                        FamilyId = family.Id,
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,
@@ -263,6 +264,7 @@ namespace BudgetManagementSystem.Api.Controllers
                     .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
+                        FamilyId = id,
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,
