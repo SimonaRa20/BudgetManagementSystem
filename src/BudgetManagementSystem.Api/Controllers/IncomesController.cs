@@ -75,7 +75,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeCreateRequest incomeRequest)
+        public async Task<IActionResult> CreateIncome(int familyId, int memberId, IncomeRequest incomeRequest)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPut("{incomeId}")]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> UpdateIncome(int familyId, int memberId, int incomeId, IncomeCreateRequest incomeUpdate)
+        public async Task<IActionResult> UpdateIncome(int familyId, int memberId, int incomeId, IncomeRequest incomeUpdate)
         {
             try
             {

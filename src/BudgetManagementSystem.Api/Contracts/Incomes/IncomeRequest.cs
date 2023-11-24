@@ -2,7 +2,7 @@
 
 namespace BudgetManagementSystem.Api.Contracts.Incomes
 {
-    public class IncomeCreateRequest
+    public class IncomeRequest
     {
         public string? Title { get; set; }
         public IncomeCategories Category { get; set; }

@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    DialogActions,
-    Button
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 import { API_BASE_URL } from '../../apiConfig';
+import { FamilyResponse } from '../models/family';
 
 interface CreateFamilyModalProps {
     open: boolean;
     onClose: () => void;
-    onSuccess: (createdFamily: any) => void;
+    onSuccess: (createdFamily: FamilyResponse) => void;
 }
 
 const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, onSuccess }) => {
@@ -29,15 +23,15 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, on
             }
 
             const token = localStorage.getItem('token');
-            const response = await axios.post(
+            const response = await axios.post<FamilyResponse>(
                 `${API_BASE_URL}/api/Families`,
                 { title: newFamilyTitle },
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
                 }
-            );
+              );
 
             const createdFamily = response.data;
             onSuccess(createdFamily);

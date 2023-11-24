@@ -141,7 +141,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
                 var familyMembers = await _dbContext.FamilyMembers
                     .Where(fm => fm.FamilyId == id)
-                    .Select(fm => new Member
+                    .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
                         Name = fm.User.Name,
@@ -259,7 +259,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
                     var familyMembers = await _dbContext.FamilyMembers
                     .Where(fm => fm.FamilyId == id)
-                    .Select(fm => new Member
+                    .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
                         Name = fm.User.Name,

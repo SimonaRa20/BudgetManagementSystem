@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Modal,
-  Button,
-} from '@mui/material';
-import { Family, FamilyMember } from './interfaces';
+import { Box, Typography, Card, CardContent, Modal, Button } from '@mui/material';
+import { FamilyMemberResponse } from './models/family-member';
+import { FamilyByIdResponse } from './models/family';
 import { API_BASE_URL } from '../apiConfig';
 import { Container } from '@mui/system';
 import { useAuth } from './context/AuthContext';
 
 interface MemberModalProps {
-  member: FamilyMember | null;
+  member: FamilyMemberResponse | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const MemberModal: React.FC<MemberModalProps> = ({ member, isOpen, onClose }) => {
   if (!member) {
-    return null; // Return null if member is not available
+    return null;
   }
 
   return (
@@ -41,8 +35,8 @@ const MemberModal: React.FC<MemberModalProps> = ({ member, isOpen, onClose }) =>
 
 const FamilyDetails: React.FC = () => {
   const { familyId } = useParams();
-  const [family, setFamily] = useState<Family | null>(null);
-  const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
+  const [family, setFamily] = useState<FamilyByIdResponse | null>(null);
+  const [selectedMember, setSelectedMember] = useState<FamilyMemberResponse | null>(null);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -52,7 +46,7 @@ const FamilyDetails: React.FC = () => {
     const fetchFamilyDetails = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get<Family>(getFamilyEndpoint, {
+        const response = await axios.get<FamilyByIdResponse>(getFamilyEndpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -70,7 +64,7 @@ const FamilyDetails: React.FC = () => {
     fetchFamilyDetails();
   }, [familyId, getFamilyEndpoint]);
 
-  const handleOpenMemberModal = (member: FamilyMember) => {
+  const handleOpenMemberModal = (member: FamilyMemberResponse) => {
     setSelectedMember(member);
     setIsMemberModalOpen(true);
   };
@@ -105,7 +99,7 @@ const FamilyDetails: React.FC = () => {
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
             <Typography variant="h6">Members:</Typography>
-            {family.members.map((member) => (
+            {family.members.map((member:FamilyMemberResponse) => (
               <Box key={member.familyMemberId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography>
                   {`${member.name} ${member.surname}`}

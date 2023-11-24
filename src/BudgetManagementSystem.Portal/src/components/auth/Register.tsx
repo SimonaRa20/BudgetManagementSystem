@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box,Button, TextField, Container, Typography } from '@mui/material';
+import { Box, Button, TextField, Container, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { User } from './interfaces';
-import { API_BASE_URL } from '../apiConfig';
+import { UserRegisterRequest } from '../models/auth'; 
+import { API_BASE_URL } from '../../apiConfig';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Register: React.FC = () => {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post<User>(registerEndpoint, {
+      await axios.post<UserRegisterRequest>(registerEndpoint, {
         name,
         surname,
         username,
@@ -25,10 +25,8 @@ const Register: React.FC = () => {
         password,
       });
 
-      console.log(response.data);
       navigate('/login');
     } catch (error: any) {
-      console.error('Registration failed:', (error.response?.data as string) || error.message);
       setError((error.response?.data as string) || error.message);
     }
   };

@@ -52,7 +52,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 var familyMembers = await _dbContext.FamilyMembers
                     .Where(fm => fm.FamilyId == familyId)
                     .Include(fm => fm.User)
-                    .Select(fm => new Member
+                    .Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
                         Name = fm.User.Name,
@@ -104,13 +104,14 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Family member not found.");
                 }
 
-                    var member = new Member
+                    var member = new FamilyMemberResponse
                     {
                         FamilyMemberId = familyMember.Id,
                         Name = familyMember.User.Name,
                         Surname = familyMember.User.Surname,
                         UserName = familyMember.User.UserName,
-                        Email = familyMember.User.Email
+                        Email = familyMember.User.Email,
+                        Type = familyMember.Type
                     };
 
                     return Ok(member);
@@ -245,8 +246,8 @@ namespace BudgetManagementSystem.Api.Controllers
                 }
 
                 var existingFamily = await _dbContext.Families
-                    .Include(f => f.FamilyMembers) // Include FamilyMembers
-                    .ThenInclude(fm => fm.User) // Include User within FamilyMembers
+                    .Include(f => f.FamilyMembers)
+                    .ThenInclude(fm => fm.User)
                     .FirstOrDefaultAsync(f => f.Id == familyId);
 
                 if (existingFamily == null)
@@ -294,13 +295,13 @@ namespace BudgetManagementSystem.Api.Controllers
                 {
                     Id = existingFamily.Id,
                     Title = existingFamily.Title,
-                    Members = existingFamily.FamilyMembers.Select(fm => new Member
+                    Members = existingFamily.FamilyMembers.Select(fm => new FamilyMemberResponse
                     {
                         FamilyMemberId = fm.Id,
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,
-                        Email = fm.User.Email
+                        Email = fm.User.Email,
                     }).ToList()
                 };
 

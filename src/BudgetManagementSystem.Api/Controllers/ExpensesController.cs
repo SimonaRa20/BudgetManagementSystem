@@ -75,7 +75,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> CreateExpense(int familyId, int memberId, ExpenseCreateRequest expenseRequest)
+        public async Task<IActionResult> CreateExpense(int familyId, int memberId, ExpenseRequest expenseRequest)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace BudgetManagementSystem.Api.Controllers
 
         [HttpPut("{expenseId}")]
         [Authorize(Roles = Role.Owner)]
-        public async Task<IActionResult> UpdateExpense(int familyId, int memberId, int expenseId, ExpenseCreateRequest expenseUpdate)
+        public async Task<IActionResult> UpdateExpense(int familyId, int memberId, int expenseId, ExpenseRequest expenseUpdate)
         {
             try
             {

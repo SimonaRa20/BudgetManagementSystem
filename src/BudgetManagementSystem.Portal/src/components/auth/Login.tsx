@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Box, Button, TextField, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { User } from './interfaces';
-import { useAuth } from './context/AuthContext';
-import { API_BASE_URL } from '../apiConfig';
+import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../../apiConfig';
+import { UserLoginRequest, UserLoginResponse } from '../models/auth'; // Assuming auth.ts is in the same folder
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,19 +16,21 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post<User>(loginEndpoint, {
+      const loginRequest: UserLoginRequest = {
         email,
         password,
-      });
+      };
 
-      const { id, userName, role, token, refreshToken } = response.data;
+      const response = await axios.post<UserLoginResponse>(loginEndpoint, loginRequest);
 
+      const { id, username, role, token, refreshtoken } = response.data;
 
-    localStorage.setItem('userId', id.toString());
-    localStorage.setItem('userName', userName);
-    localStorage.setItem('userRole', role);
-    localStorage.setItem('token', token);
-    localStorage.setItem('refreshtoken', refreshToken);
+      localStorage.setItem('userId', id.toString());
+      localStorage.setItem('userName', username);
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshtoken', refreshtoken);
+
       login();
       navigate('/families');
       
@@ -40,7 +42,7 @@ const Login: React.FC = () => {
   return (
     <Container component="main" maxWidth="xs">
       <Box style={{ marginTop: '2rem' }}>
-        <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>
+        <Typography component="h1" variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
           Login
         </Typography>
         {error && (
@@ -61,7 +63,7 @@ const Login: React.FC = () => {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <TextField
             variant="outlined"
@@ -75,7 +77,7 @@ const Login: React.FC = () => {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <Button
             type="button"
@@ -83,7 +85,7 @@ const Login: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleLogin}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           >
             Login
           </Button>

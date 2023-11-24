@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container
-} from '@mui/material';
+import { Box, Grid, Card, CardContent, Typography, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Family } from '../interfaces';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../../apiConfig';
 import CreateFamilyModal from './CreateFamilyModal';
 import DeleteFamilyModal from './DeleteFamilyModal';
 import UpdateFamilyModal from './UpdateFamilyModal';
+import { FamilyResponse } from '../models/family';
 
 const Families: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [families, setFamilies] = useState<Family[]>([]);
+  const [families, setFamilies] = useState<FamilyResponse[]>([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteFamilyId, setDeleteFamilyId] = useState<number | null>(null);
@@ -34,7 +26,7 @@ const Families: React.FC = () => {
       try {
         if (isAuthenticated) {
           const token = localStorage.getItem('token');
-          const response = await axios.get<Family[]>(getFamiliesEndpoint, {
+          const response = await axios.get<FamilyResponse[]>(getFamiliesEndpoint, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -60,8 +52,14 @@ const Families: React.FC = () => {
     setOpenCreateModal(false);
   };
 
-  const handleCreateFamilySuccess = (createdFamily: Family) => {
-    setFamilies((prevFamilies) => [...prevFamilies, createdFamily]);
+  const handleCreateFamilySuccess = (createdFamily: FamilyResponse) => {
+    const family: FamilyResponse = {
+      id: createdFamily.id,
+      title: createdFamily.title,
+      membersCount: createdFamily.membersCount,
+    };
+  
+    setFamilies((prevFamilies) => [...prevFamilies, family]);
   };
 
   const handleOpenUpdateModal = (familyId: number) => {
@@ -74,30 +72,6 @@ const Families: React.FC = () => {
     setOpenUpdateModal(false);
   };
 
-  const handleUpdateFamily = async (updatedFamily: Family) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `${API_BASE_URL}/api/Families/${updatedFamily.id}`,
-        updatedFamily,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setFamilies((prevFamilies) =>
-        prevFamilies.map((family) =>
-          family.id === updatedFamily.id ? { ...family, title: updatedFamily.title } : family
-        )
-      );
-      setOpenUpdateModal(false);
-    } catch (error: any) {
-      console.error('Failed to update family:', error.response?.data || error.message);
-    }
-  };
-
   const handleOpenDeleteDialog = (familyId: number) => {
     setDeleteFamilyId(familyId);
     setOpenDeleteDialog(true);
@@ -108,20 +82,16 @@ const Families: React.FC = () => {
     setOpenDeleteDialog(false);
   };
 
-  const handleDeleteFamily = async () => {
+  const handleUpdateSuccess = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/api/Families/${deleteFamilyId}`, {
+      const response = await axios.get<FamilyResponse[]>(getFamiliesEndpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      setFamilies((prevFamilies) =>
-        prevFamilies.filter((family) => family.id !== deleteFamilyId)
-      );
-
-      setDeleteFamilyId(null);
+  
+      setFamilies(response.data);
     } catch (error: any) {
-      console.error('Failed to delete family:', error.response?.data || error.message);
+      console.error('Failed to fetch families:', error.response?.data || error.message);
     }
   };
 
@@ -197,8 +167,8 @@ const Families: React.FC = () => {
             <UpdateFamilyModal
               open={openUpdateModal}
               onClose={handleCloseUpdateModal}
-              onUpdate={handleUpdateFamily}
               familyId={updateFamilyId}
+              onUpdateSuccess={handleUpdateSuccess} // Pass the callback
             />
             <CreateFamilyModal
               open={openCreateModal}
@@ -209,7 +179,7 @@ const Families: React.FC = () => {
             <DeleteFamilyModal
               open={openDeleteDialog}
               onClose={handleCloseDeleteDialog}
-              onDelete={handleDeleteFamily}
+              familyId={deleteFamilyId}
             />
           </>
         ) : (

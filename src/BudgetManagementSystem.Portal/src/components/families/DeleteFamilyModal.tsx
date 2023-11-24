@@ -1,23 +1,26 @@
 import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography
-} from '@mui/material';
+import axios from 'axios';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import { API_BASE_URL } from '../../apiConfig';
 
 interface DeleteFamilyModalProps {
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
+  familyId: number | null;
 }
 
-const DeleteFamilyModal: React.FC<DeleteFamilyModalProps> = ({ open, onClose, onDelete }) => {
+const DeleteFamilyModal: React.FC<DeleteFamilyModalProps> = ({ open, onClose, familyId }) => {
   const handleConfirmDelete = async () => {
-    onDelete();
-    onClose();
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE_URL}/api/Families/${familyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      onClose();
+    } catch (error: any) {
+      console.error('Failed to delete family:', error.response?.data || error.message);
+    }
   };
 
   return (

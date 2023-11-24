@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 import { API_BASE_URL } from '../../apiConfig';
+import { FamilyCreateRequest } from '../models/family';
 
 interface UpdateFamilyModalProps {
   open: boolean;
   onClose: () => void;
-  onUpdate: (updatedFamily: any) => void;
   familyId: number | null;
+  onUpdateSuccess: () => void;
 }
 
-const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, onUpdate, familyId }) => {
+const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({
+  open,
+  onClose,
+  familyId,
+  onUpdateSuccess,
+}) => {
   const [updatedFamilyTitle, setUpdatedFamilyTitle] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitAttempted, setIsSubmitAttempted] = useState(false);
@@ -19,14 +25,20 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
     const fetchFamilyTitle = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/api/Families/${familyId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUpdatedFamilyTitle(response.data.title);
       } catch (error: any) {
-        console.error('Failed to fetch family title:', error.response?.data || error.message);
+        console.error(
+          'Failed to fetch family title:',
+          error.response?.data || error.message
+        );
       }
     };
 
@@ -43,7 +55,7 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
       }
 
       const token = localStorage.getItem('token');
-      const response = await axios.put(
+      await axios.put<FamilyCreateRequest>(
         `${API_BASE_URL}/api/Families/${familyId}`,
         { title: updatedFamilyTitle },
         {
@@ -53,7 +65,8 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
         }
       );
 
-      onUpdate(response.data);
+      onUpdateSuccess();
+
       onClose();
     } catch (error: any) {
       const errorResponse = error.response?.data as string;
@@ -69,10 +82,14 @@ const UpdateFamilyModal: React.FC<UpdateFamilyModalProps> = ({ open, onClose, on
     onClose();
   };
 
-  const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setUpdatedFamilyTitle(e.target.value);
     if (isSubmitAttempted) {
-      setErrorMessage(e.target.value.trim() ? '' : 'Family title cannot be empty.');
+      setErrorMessage(
+        e.target.value.trim() ? '' : 'Family title cannot be empty.'
+      );
     }
   };
 

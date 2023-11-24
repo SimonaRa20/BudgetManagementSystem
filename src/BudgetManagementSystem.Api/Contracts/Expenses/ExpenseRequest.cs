@@ -2,7 +2,7 @@
 
 namespace BudgetManagementSystem.Api.Contracts.Expenses
 {
-    public class ExpenseCreateRequest
+    public class ExpenseRequest
     {
         public string? Title { get; set; }
         public ExpenseCategories Category { get; set; }
