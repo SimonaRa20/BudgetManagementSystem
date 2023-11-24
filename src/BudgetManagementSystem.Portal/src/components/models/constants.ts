@@ -40,3 +40,26 @@ export enum ExpenseCategories {
     Admin: 'Admin',
   };
   
+  
+  export const getMemberTypeText = (type: MemberType): string => {
+    switch (type) {
+      case MemberType.Parent:
+        return 'Parent';
+        case MemberType.Child:
+          return 'Child';
+        case MemberType.Sibling:
+          return 'Sibling';
+        case MemberType.Grandparent:
+          return 'Grandparent';
+        case MemberType.Aunt:
+          return 'Aunt';
+        case MemberType.Uncle:
+          return 'Uncle';
+        case MemberType.Cousin:
+          return 'Cousin';
+        case MemberType.Other:
+          return 'Other';
+        default:
+          return 'Unknown';
+      }
+  };

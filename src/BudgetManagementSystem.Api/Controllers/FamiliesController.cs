@@ -147,7 +147,8 @@ namespace BudgetManagementSystem.Api.Controllers
                         Name = fm.User.Name,
                         Surname = fm.User.Surname,
                         UserName = fm.User.UserName,
-                        Email = fm.User.Email
+                        Email = fm.User.Email,
+                        Type = fm.Type
                     })
                     .ToListAsync();
 

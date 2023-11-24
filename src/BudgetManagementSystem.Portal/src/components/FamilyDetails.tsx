@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Typography, Card, CardContent, Modal, Button } from '@mui/material';
 import { FamilyMemberResponse } from './models/family-member';
 import { FamilyByIdResponse } from './models/family';
+import { getMemberTypeText } from './models/constants';
 import { API_BASE_URL } from '../apiConfig';
 import { Container } from '@mui/system';
 import { useAuth } from './context/AuthContext';
@@ -25,6 +26,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ member, isOpen, onClose }) =>
         <Typography variant="h6">{`${member.name} ${member.surname}`}</Typography>
         <Typography>{`Username: ${member.userName}`}</Typography>
         <Typography>{`Email: ${member.email}`}</Typography>
+        <Typography>{`Type: ${getMemberTypeText(member.type)}`}</Typography>
         <Button onClick={onClose} sx={{ marginTop: '1rem' }}>
           Close
         </Button>
@@ -51,7 +53,7 @@ const FamilyDetails: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log(response.data)
         setFamily(response.data);
       } catch (error: any) {
         console.error(
