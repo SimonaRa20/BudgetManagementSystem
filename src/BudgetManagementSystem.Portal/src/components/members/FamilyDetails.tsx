@@ -1,4 +1,3 @@
-// FamilyDetails.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -10,15 +9,17 @@ import { FamilyByIdResponse } from '../models/family';
 import { API_BASE_URL } from '../../apiConfig';
 import { Container } from '@mui/system';
 import { useAuth } from './../context/AuthContext';
+import UpdateMemberTypeModal from './UpdateMemberTypeModal';
 
 const FamilyDetails: React.FC = () => {
   const { familyId } = useParams();
   const [family, setFamily] = useState<FamilyByIdResponse | null>(null);
   const [selectedMember, setSelectedMember] = useState<FamilyMemberResponse | null>(null);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate(); // Get the history object
+  const navigate = useNavigate();
 
   const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
 
@@ -54,6 +55,16 @@ const FamilyDetails: React.FC = () => {
     setIsMemberModalOpen(false);
   };
 
+  const handleOpenUpdateModal = (member: FamilyMemberResponse) => {
+    setSelectedMember(member);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setSelectedMember(null);
+    setIsUpdateModalOpen(false);
+  };
+
   const handleOpenDeleteModal = (member: FamilyMemberResponse) => {
     setSelectedMember(member);
     setIsDeleteModalOpen(true);
@@ -64,10 +75,26 @@ const FamilyDetails: React.FC = () => {
     setIsDeleteModalOpen(false);
   };
 
+  const fetchFamilyDetails = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get<FamilyByIdResponse>(getFamilyEndpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      setFamily(response.data);
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch family details:',
+        (error.response?.data as string) || error.message
+      );
+    }
+  };
+
   const onDeleteMember = () => {
-    // Check if the family has no members left
     if (family && family.members.length === 1) {
-      // Redirect to the families page
       navigate('/families');
     }
   };
@@ -102,6 +129,13 @@ const FamilyDetails: React.FC = () => {
                   <Button variant="contained" color="secondary" onClick={() => handleOpenMemberModal(member)}>
                     View Details
                   </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleOpenUpdateModal(member)}
+                  >
+                    Update Type
+                  </Button>
                   <Button variant="contained" color="error" onClick={() => handleOpenDeleteModal(member)}>
                     Delete
                   </Button>
@@ -117,7 +151,12 @@ const FamilyDetails: React.FC = () => {
         isOpen={isMemberModalOpen}
         onClose={handleCloseMemberModal}
       />
-      
+       <UpdateMemberTypeModal
+        member={selectedMember}
+        isOpen={isUpdateModalOpen}
+        onUpdate={fetchFamilyDetails}
+        onClose={handleCloseUpdateModal}
+      />
       <DeleteMemberModal
         member={selectedMember}
         isOpen={isDeleteModalOpen}

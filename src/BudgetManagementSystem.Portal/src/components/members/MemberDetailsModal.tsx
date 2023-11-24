@@ -1,4 +1,3 @@
-// MemberDetailsModal.tsx
 import React from 'react';
 import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { FamilyMemberResponse } from '../models/family-member';
@@ -18,9 +17,10 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ member, isOpen,
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>
-        <Typography variant="h6">{`${member.name} ${member.surname}`}</Typography>
+        {`${member.name} ${member.surname}`}
       </DialogTitle>
       <DialogContent>
+        <Typography variant="h6">{`${member.name} ${member.surname}`}</Typography>
         <Typography>{`Username: ${member.userName}`}</Typography>
         <Typography>{`Email: ${member.email}`}</Typography>
         <Typography>{`Type: ${getMemberTypeText(member.type)}`}</Typography>

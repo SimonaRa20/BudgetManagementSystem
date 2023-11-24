@@ -25,14 +25,14 @@ export enum ExpenseCategories {
   }
   
   export enum MemberType {
-    Parent,
-    Child,
-    Sibling,
-    Grandparent,
-    Aunt,
-    Uncle,
-    Cousin,
-    Other,
+    Parent = 0,
+    Child = 1,
+    Sibling = 2,
+    Grandparent = 3,
+    Aunt = 4,
+    Uncle = 5,
+    Cousin = 6,
+    Other = 7,
   }
   
   export const Role = {
@@ -63,3 +63,8 @@ export enum ExpenseCategories {
           return 'Unknown';
       }
   };
+
+  export const getMemberTypeNumericValue = (type: MemberType): number => {
+    return type;
+  };
+  
