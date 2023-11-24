@@ -1,47 +1,61 @@
+// FamilyDetails.tsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Card, CardContent, Button } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  Container,
+} from '@mui/material';
 import MemberDetailsModal from './MemberDetailsModal';
 import DeleteMemberModal from './DeleteMemberModal';
 import { FamilyMemberResponse } from '../models/family-member';
 import { FamilyByIdResponse } from '../models/family';
 import { API_BASE_URL } from '../../apiConfig';
-import { Container } from '@mui/system';
 import { useAuth } from './../context/AuthContext';
 import UpdateMemberTypeModal from './UpdateMemberTypeModal';
+import AddMemberModal from './AddMemberModal';
 
-const FamilyDetails: React.FC = () => {
+interface FamilyDetailsProps {
+  // Add any additional props here
+}
+
+const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
   const { familyId } = useParams();
   const [family, setFamily] = useState<FamilyByIdResponse | null>(null);
   const [selectedMember, setSelectedMember] = useState<FamilyMemberResponse | null>(null);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
 
-  useEffect(() => {
-    const fetchFamilyDetails = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get<FamilyByIdResponse>(getFamilyEndpoint, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(response.data);
-        setFamily(response.data);
-      } catch (error: any) {
-        console.error(
-          'Failed to fetch family details:',
-          (error.response?.data as string) || error.message
-        );
-      }
-    };
+  const fetchFamilyDetails = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get<FamilyByIdResponse>(getFamilyEndpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      setFamily(response.data);
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch family details:',
+        (error.response?.data as string) || error.message
+      );
+    }
+  };
 
+  useEffect(() => {
     fetchFamilyDetails();
   }, [familyId, getFamilyEndpoint]);
 
@@ -65,6 +79,32 @@ const FamilyDetails: React.FC = () => {
     setIsUpdateModalOpen(false);
   };
 
+  const handleOpenAddMemberModal = () => {
+    setIsAddMemberModalOpen(true);
+  };
+
+  const handleCloseAddMemberModal = () => {
+    setIsAddMemberModalOpen(false);
+  };
+
+  const handleAddMember = async (userId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers`, { userId }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      // Update the member list locally
+      fetchFamilyDetails();
+      // Close the modal
+      handleCloseAddMemberModal();
+    } catch (error: any) {
+      console.error('Failed to add a new member to the family:', error.message);
+    }
+  };
+
   const handleOpenDeleteModal = (member: FamilyMemberResponse) => {
     setSelectedMember(member);
     setIsDeleteModalOpen(true);
@@ -73,24 +113,6 @@ const FamilyDetails: React.FC = () => {
   const handleCloseDeleteModal = () => {
     setSelectedMember(null);
     setIsDeleteModalOpen(false);
-  };
-
-  const fetchFamilyDetails = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get<FamilyByIdResponse>(getFamilyEndpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response.data);
-      setFamily(response.data);
-    } catch (error: any) {
-      console.error(
-        'Failed to fetch family details:',
-        (error.response?.data as string) || error.message
-      );
-    }
   };
 
   const onDeleteMember = () => {
@@ -119,6 +141,9 @@ const FamilyDetails: React.FC = () => {
         <Typography component="h1" variant="h5">
           {family.title}
         </Typography>
+        <Button variant="contained" color="primary" onClick={handleOpenAddMemberModal}>
+          Add New Member
+        </Button>
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
             <Typography variant="h6">Members:</Typography>
@@ -145,13 +170,18 @@ const FamilyDetails: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-
+      <AddMemberModal
+        isOpen={isAddMemberModalOpen}
+        onClose={handleCloseAddMemberModal}
+        familyId={familyId ? parseInt(familyId, 10) : 0}
+        onMemberAdded={fetchFamilyDetails}
+      />
       <MemberDetailsModal
         member={selectedMember}
         isOpen={isMemberModalOpen}
         onClose={handleCloseMemberModal}
       />
-       <UpdateMemberTypeModal
+      <UpdateMemberTypeModal
         member={selectedMember}
         isOpen={isUpdateModalOpen}
         onUpdate={fetchFamilyDetails}
