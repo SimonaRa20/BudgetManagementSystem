@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { FamilyMemberResponse } from '../models/family-member';
 import { getMemberTypeText } from '../models/constants';
 

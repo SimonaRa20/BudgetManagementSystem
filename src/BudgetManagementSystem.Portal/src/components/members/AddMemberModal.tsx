@@ -1,8 +1,5 @@
-// AddMemberModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
   Typography,
   Dialog,
   DialogTitle,
@@ -22,7 +19,7 @@ interface AddMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   familyId: number;
-  onMemberAdded: () => void; // Add this prop
+  onMemberAdded: () => void;
 }
 
 const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, familyId, onMemberAdded }) => {
@@ -62,9 +59,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, family
           },
         }
       );
-      // Update the member list locally
       onMemberAdded();
-      // Close the modal
       onClose();
     } catch (error: any) {
       console.error('Failed to add a new member to the family:', error.message);

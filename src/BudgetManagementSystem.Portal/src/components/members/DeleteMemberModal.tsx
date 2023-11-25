@@ -1,6 +1,5 @@
-// DeleteMemberModal.tsx
 import React from 'react';
-import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { FamilyMemberResponse } from '../models/family-member';
 import axios from 'axios';
 import { API_BASE_URL } from '../../apiConfig';
@@ -35,11 +34,9 @@ const DeleteMemberModal: React.FC<DeleteMemberModalProps> = ({ member, isOpen, o
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>
-        <Typography variant="h6">Delete Member</Typography>
-      </DialogTitle>
+     <DialogTitle>Delete Member</DialogTitle>
       <DialogContent>
-        <Typography>{`Are you sure you want to delete ${member.name} ${member.surname}?`}</Typography>
+        <Typography variant="body1">{`Are you sure you want to delete ${member.name} ${member.surname}?`}</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">

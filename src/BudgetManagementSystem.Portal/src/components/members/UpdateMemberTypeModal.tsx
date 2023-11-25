@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-    Box,
     Typography,
     Dialog,
     DialogTitle,
@@ -36,8 +35,6 @@ const UpdateMemberTypeModal: React.FC<UpdateMemberTypeModalProps> = ({
         label: getMemberTypeText(value as MemberType),
     }));
 
-
-
     const [newType, setNewType] = useState<MemberType | ''>('');
     const [existingTypeText, setExistingTypeText] = useState<string>('');
 
@@ -56,7 +53,7 @@ const UpdateMemberTypeModal: React.FC<UpdateMemberTypeModalProps> = ({
                 console.log(numericValue)
                 await axios.put(
                     `${API_BASE_URL}/api/Families/${member.familyId}/FamilyMembers/${member.familyMemberId}`,
-                    numericValue, 
+                    numericValue,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -1,16 +1,7 @@
-// FamilyDetails.tsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Container,
-} from '@mui/material';
+import { Box, Typography, Card, CardContent, Button, Container } from '@mui/material';
 import MemberDetailsModal from './MemberDetailsModal';
 import DeleteMemberModal from './DeleteMemberModal';
 import { FamilyMemberResponse } from '../models/family-member';
@@ -21,10 +12,9 @@ import UpdateMemberTypeModal from './UpdateMemberTypeModal';
 import AddMemberModal from './AddMemberModal';
 
 interface FamilyDetailsProps {
-  // Add any additional props here
 }
 
-const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
+const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
   const { familyId } = useParams();
   const [family, setFamily] = useState<FamilyByIdResponse | null>(null);
   const [selectedMember, setSelectedMember] = useState<FamilyMemberResponse | null>(null);
@@ -45,7 +35,6 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       setFamily(response.data);
     } catch (error: any) {
       console.error(
@@ -87,24 +76,6 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
     setIsAddMemberModalOpen(false);
   };
 
-  const handleAddMember = async (userId: number) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers`, { userId }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      // Update the member list locally
-      fetchFamilyDetails();
-      // Close the modal
-      handleCloseAddMemberModal();
-    } catch (error: any) {
-      console.error('Failed to add a new member to the family:', error.message);
-    }
-  };
-
   const handleOpenDeleteModal = (member: FamilyMemberResponse) => {
     setSelectedMember(member);
     setIsDeleteModalOpen(true);
@@ -115,9 +86,33 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const onDeleteMember = () => {
-    if (family && family.members.length === 1) {
-      navigate('/families');
+  const onDeleteMember = async () => {
+    try {
+      setFamily((prevFamily: FamilyByIdResponse | null) => {
+        if (!prevFamily) {
+          return prevFamily;
+        }
+      
+        const filteredMembers = prevFamily.members?.filter(
+          (member) => member.familyMemberId !== selectedMember?.familyMemberId
+        );
+      
+        return {
+          ...prevFamily,
+          members: filteredMembers,
+        };
+      });
+      
+      // Navigation logic
+      if (family && family.members.length === 1) {
+        navigate('/families');
+      } else {
+        navigate(`/family/${family?.id}`);
+      }
+    } catch (error) {
+      console.error('Error deleting member:', error);
+    } finally {
+      setIsDeleteModalOpen(false);
     }
   };
 
@@ -148,10 +143,17 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
           <CardContent>
             <Typography variant="h6">Members:</Typography>
             {family.members.map((member: FamilyMemberResponse) => (
-              <Box key={member.familyMemberId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box
+                key={member.familyMemberId}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <Typography>{`${member.name} ${member.surname}`}</Typography>
                 <Box style={{ display: 'flex', gap: '8px' }}>
-                  <Button variant="contained" color="secondary" onClick={() => handleOpenMemberModal(member)}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleOpenMemberModal(member)}
+                  >
                     View Details
                   </Button>
                   <Button
@@ -161,7 +163,11 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = () => {
                   >
                     Update Type
                   </Button>
-                  <Button variant="contained" color="error" onClick={() => handleOpenDeleteModal(member)}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleOpenDeleteModal(member)}
+                  >
                     Delete
                   </Button>
                 </Box>
