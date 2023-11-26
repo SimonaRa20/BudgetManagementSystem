@@ -132,25 +132,25 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
 
   return (
     <Container>
-      <Box style={{ marginTop: '2rem' }}>
+      <Box style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
         <Typography component="h1" variant="h5">
           {family.title}
         </Typography>
         <Button variant="contained" color="primary" onClick={handleOpenAddMemberModal}>
           Add New Member
         </Button>
-        <Card style={{ marginTop: '16px' }}>
-          <CardContent>
-            <Typography variant="h6">Members:</Typography>
-            {family.members.map((member: FamilyMemberResponse, index: number) => (
-              <React.Fragment key={member.familyMemberId}>
+      </Box>
+      <Card style={{ marginTop: '16px' }}>
+        <CardContent>
+          <Typography variant="h6">Members:</Typography>
+          {family.members.map((member: FamilyMemberResponse, index: number) => (
+            <React.Fragment key={member.familyMemberId}>
               <Box
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginBottom: '1rem',
-                  marginTop: '1rem'
+                  marginTop: '1rem',
                 }}
               >
                 <Typography>{`${member.name} ${member.surname}`}</Typography>
@@ -187,11 +187,9 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
               </Box>
               {index < family.members.length - 1 && <Divider />}
             </React.Fragment>
-            ))}
-           
-          </CardContent>
-        </Card>
-      </Box>
+          ))}
+        </CardContent>
+      </Card>
       <AddMemberModal
         isOpen={isAddMemberModalOpen}
         onClose={handleCloseAddMemberModal}
