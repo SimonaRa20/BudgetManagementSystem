@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Card, CardContent, Button, Container } from '@mui/material';
+import { Divider, Box, Typography, Card, CardContent, Button, Container } from '@mui/material';
 import MemberDetailsModal from './MemberDetailsModal';
 import DeleteMemberModal from './DeleteMemberModal';
 import { FamilyMemberResponse } from '../models/family-member';
@@ -92,17 +92,17 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
         if (!prevFamily) {
           return prevFamily;
         }
-      
+
         const filteredMembers = prevFamily.members?.filter(
           (member) => member.familyMemberId !== selectedMember?.familyMemberId
         );
-      
+
         return {
           ...prevFamily,
           members: filteredMembers,
         };
       });
-      
+
       // Navigation logic
       if (family && family.members.length === 1) {
         navigate('/families');
@@ -142,13 +142,26 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
             <Typography variant="h6">Members:</Typography>
-            {family.members.map((member: FamilyMemberResponse) => (
+            {family.members.map((member: FamilyMemberResponse, index: number) => (
+              <React.Fragment key={member.familyMemberId}>
               <Box
-                key={member.familyMemberId}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  marginTop: '1rem'
+                }}
               >
                 <Typography>{`${member.name} ${member.surname}`}</Typography>
                 <Box style={{ display: 'flex', gap: '8px' }}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}`)}
+                  >
+                    Check Budget
+                  </Button>
                   <Button
                     variant="contained"
                     color="secondary"
@@ -172,7 +185,10 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
                   </Button>
                 </Box>
               </Box>
+              {index < family.members.length - 1 && <Divider />}
+            </React.Fragment>
             ))}
+           
           </CardContent>
         </Card>
       </Box>

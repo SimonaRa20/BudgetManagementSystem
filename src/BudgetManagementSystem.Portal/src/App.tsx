@@ -9,6 +9,7 @@ import FamilyDetails from './components/members/FamilyDetails';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Home from './Home';
+import MemberExpenses from './components/expenses/MemberExpenses';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/families" element={<Families />} />
               <Route path="/family/:familyId" element={<FamilyDetails />} />
+              <Route path="/family/:familyId/member/:memberId" element={<MemberExpenses />} />
             </Routes>
           </div>
         </Router>

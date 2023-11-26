@@ -20,7 +20,6 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ member, isOpen,
         {`${member.name} ${member.surname}`}
       </DialogTitle>
       <DialogContent>
-        <Typography variant="h6">{`${member.name} ${member.surname}`}</Typography>
         <Typography>{`Username: ${member.userName}`}</Typography>
         <Typography>{`Email: ${member.email}`}</Typography>
         <Typography>{`Type: ${getMemberTypeText(member.type)}`}</Typography>
