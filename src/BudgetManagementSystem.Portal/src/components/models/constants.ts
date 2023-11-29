@@ -1,34 +1,45 @@
 export enum ExpenseCategories {
-    Rent,
-    Groceries,
-    Transportation,
-    Utilities,
-    Entertainment,
-    DinnerOut,
-    Travel,
-    Healthcare,
-    Education,
-    Subscription,
-    Other,
+    Rent = 0,
+    Groceries = 1,
+    Transportation = 2,
+    Utilities = 3,
+    Entertainment = 4,
+    DinnerOut = 5,
+    Travel = 6,
+    Healthcare = 7,
+    Education = 8,
+    Subscription = 9,
+    Other = 10,
   }
 
-  // Add this function to convert between numeric values and titles
-export const getCategoryTitle = (category: ExpenseCategories): string => {
-  switch (category) {
-    case ExpenseCategories.Rent: return 'Rent';
-    case ExpenseCategories.Groceries: return 'Groceries';
-    case ExpenseCategories.Transportation: return 'Transportation';
-    case ExpenseCategories.Utilities: return 'Utilities';
-    case ExpenseCategories.Entertainment: return 'Entertainment';
-    case ExpenseCategories.DinnerOut: return 'Dinner Out';
-    case ExpenseCategories.Travel: return 'Travel';
-    case ExpenseCategories.Healthcare: return 'Healthcare';
-    case ExpenseCategories.Education: return 'Education';
-    case ExpenseCategories.Subscription: return 'Subscription';
-    case ExpenseCategories.Other: return 'Other';
-    default: return '';
-  }
-};
+  export const getCategoryTitle = (category: ExpenseCategories): string => {
+    switch (category) {
+      case ExpenseCategories.Rent:
+        return 'Rent';
+      case ExpenseCategories.Groceries:
+        return 'Groceries';
+      case ExpenseCategories.Transportation:
+        return 'Transportation';
+      case ExpenseCategories.Utilities:
+        return 'Utilities';
+      case ExpenseCategories.Entertainment:
+        return 'Entertainment';
+      case ExpenseCategories.DinnerOut:
+        return 'Dinner Out';
+      case ExpenseCategories.Travel:
+        return 'Travel';
+      case ExpenseCategories.Healthcare:
+        return 'Healthcare';
+      case ExpenseCategories.Education:
+        return 'Education';
+      case ExpenseCategories.Subscription:
+        return 'Subscription';
+      case ExpenseCategories.Other:
+        return 'Other';
+      default:
+        return '';
+    }
+  };
   
   export enum IncomeCategories {
     Salary,

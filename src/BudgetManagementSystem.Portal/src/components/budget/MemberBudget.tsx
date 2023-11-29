@@ -4,20 +4,23 @@ import { useParams } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Container, Card, Box, CardContent, Button, Typography } from '@mui/material';
 import { ExpenseResponse } from '../models/expense';
 import { API_BASE_URL } from '../../apiConfig';
-import ExpenseDetailsModal from './ExpenseDetailsModal';
+import ExpenseDetailsModal from './expenses/ExpenseDetailsModal';
+import ExpenseDeleteModal from './expenses/ExpenseDeleteModal';
 import { getCategoryTitle } from '../models/constants';
-import ExpenseDeleteModal from './ExpenseDeleteModal';
+import CreateExpenseModal from './expenses/CreateExpenseModal';
+import UpdateExpenseModal from './expenses/UpdateExpenseModal';
 
-interface MemberExpensesProps {
-  // Add any additional props if needed
-}
-const MemberExpenses: React.FC<MemberExpensesProps> = () => {
+interface MemberExpensesProps { }
+
+const MemberBudget: React.FC<MemberExpensesProps> = () => {
   const { familyId, memberId } = useParams();
   const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<ExpenseResponse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<ExpenseResponse | null>(null);
+  const [isCreateExpenseModalOpen, setIsCreateExpenseModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const getExpensesEndpoint = `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses`;
 
@@ -58,30 +61,41 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const confirmDelete = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (expenseToDelete) {
-        await axios.delete(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseToDelete.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        // Update expenses after successful deletion
-        fetchMemberExpenses();
-      }
-    } catch (error: any) {
-      console.error('Failed to delete expense:', error.response?.data || error.message);
-    } finally {
-      handleCloseDeleteModal();
-    }
+  const handleOpenCreateExpenseModal = () => {
+    setIsCreateExpenseModalOpen(true);
+  };
+
+  const handleCloseCreateExpenseModal = () => {
+    setIsCreateExpenseModalOpen(false);
+  };
+
+  const handleExpenseCreated = () => {
+    fetchMemberExpenses();
+  };
+
+  const handleOpenUpdateExpenseModal = (expense: ExpenseResponse) => {
+    setSelectedExpense(expense);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateExpenseModal = () => {
+    setIsUpdateModalOpen(false);
   };
 
   return (
     <Container>
       <Box style={{ marginTop: '2rem' }}>
-        <Box>
-          <Typography component="h1" variant="h5">
-            Member Expenses
-          </Typography>
+        <Box style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography component="h1" variant="h5">
+              Member Expenses
+            </Typography>
+          </Box>
+          <Box>
+            <Button variant="contained" color="primary" onClick={handleOpenCreateExpenseModal}>
+              Create New Expense
+            </Button>
+          </Box>
         </Box>
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
@@ -113,6 +127,15 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
                               View Details
                             </Button>
                             <Box marginLeft={1}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleOpenUpdateExpenseModal(expense)}
+                            >
+                              Update
+                            </Button>
+                            </Box>
+                            <Box marginLeft={1}>
                               <Button
                                 variant="contained"
                                 color="error"
@@ -134,11 +157,17 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
           </CardContent>
         </Card>
       </Box>
+      <CreateExpenseModal
+        isOpen={isCreateExpenseModalOpen}
+        onClose={handleCloseCreateExpenseModal}
+        onExpenseCreated={handleExpenseCreated}
+        familyId={familyId || ''}
+        memberId={memberId || ''}
+      />
       <ExpenseDetailsModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        expense={selectedExpense}
-      />
+        expense={selectedExpense} />
       <ExpenseDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
@@ -147,10 +176,17 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
         familyId={familyId ? parseInt(familyId, 10) : 0}
         memberId={memberId ? parseInt(memberId, 10) : 0}
         onDeleteSuccess={fetchMemberExpenses}
-        onConfirm={confirmDelete}
+      />
+      <UpdateExpenseModal
+        isOpen={isUpdateModalOpen}
+        onClose={handleCloseUpdateExpenseModal}
+        onUpdateSuccess={fetchMemberExpenses}
+        expenseId={selectedExpense?.id || 0}
+        familyId={familyId || ''}
+        memberId={memberId || ''}
       />
     </Container>
   );
 };
 
-export default MemberExpenses;
+export default MemberBudget;

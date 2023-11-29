@@ -15,8 +15,8 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { ExpenseResponse } from '../models/expense';
-import { getCategoryTitle } from '../models/constants';
+import { ExpenseResponse } from '../../models/expense';
+import { getCategoryTitle } from '../../models/constants';
 
 interface ExpenseDetailsModalProps {
   isOpen: boolean;
@@ -52,7 +52,7 @@ const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClo
                   <TableCell>{getCategoryTitle(expense.category)}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
                   <TableCell>{expense.description}</TableCell>
-                  <TableCell>{new Date(expense.time).toLocaleString()}</TableCell>
+                  <TableCell>{new Date(expense.time).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

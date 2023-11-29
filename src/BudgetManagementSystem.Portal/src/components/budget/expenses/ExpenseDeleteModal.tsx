@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import axios from 'axios';
-import { API_BASE_URL } from '../../apiConfig';
+import { API_BASE_URL } from '../../../apiConfig';
 
 interface ExpenseDeleteModalProps {
   isOpen: boolean;
@@ -11,7 +11,6 @@ interface ExpenseDeleteModalProps {
   familyId: number;
   memberId: number;
   onDeleteSuccess: () => void;
-  onConfirm: () => void;
 }
 
 const ExpenseDeleteModal: React.FC<ExpenseDeleteModalProps> = ({
@@ -21,8 +20,7 @@ const ExpenseDeleteModal: React.FC<ExpenseDeleteModalProps> = ({
   expenseTitle,
   familyId,
   memberId,
-  onDeleteSuccess,
-  onConfirm,
+  onDeleteSuccess
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -56,7 +54,6 @@ const ExpenseDeleteModal: React.FC<ExpenseDeleteModalProps> = ({
           variant="contained"
           color="error"
           onClick={() => {
-            onConfirm();
             handleConfirmDelete();
           }}
           disabled={isDeleting}
