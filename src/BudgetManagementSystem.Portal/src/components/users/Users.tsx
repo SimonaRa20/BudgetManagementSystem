@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Box,
-  Grid,
-  Card,
-  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   Typography,
   Container,
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../../apiConfig';
 import { UserResponse } from '../models/auth';
+
 const Users: React.FC = () => {
   const { isAuthenticated, userRole } = useAuth();
   const [users, setUsers] = useState<UserResponse[]>([]);
@@ -43,29 +48,34 @@ const Users: React.FC = () => {
     <Container>
       <Box style={{ marginTop: '2rem' }}>
         {isAuthenticated && userRole === expectedRole ? (
-          <Grid container spacing={3}>
-            {users.map((user) => (
-              <Grid item xs={12} sm={6} md={4} key={user.id}>
-                <Card style={{ marginBottom: '16px' }}>
-                  <CardContent>
-                    <Typography variant="h5">
-                      {user.username}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      Email: {user.email}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      Name: {user.name} {user.surname}
-                    </Typography>
-                    {/* Add additional user details as needed */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                      {/* Add additional actions as needed */}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          <>
+            <Typography variant="h4" gutterBottom>
+              Users
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                  <TableCell>Name</TableCell>
+                    <TableCell>Surname</TableCell>
+                    <TableCell>Email</TableCell>
+                    
+                    {/* Add additional headers for more user details */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.surname}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      {/* Add additional cells for more user details */}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
         ) : (
           <Typography variant="h6">
             {isAuthenticated
