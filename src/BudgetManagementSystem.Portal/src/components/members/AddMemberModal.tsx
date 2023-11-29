@@ -70,7 +70,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, family
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Add New Member</DialogTitle>
       <DialogContent>
-        <Typography>Select a user to add to the family:</Typography>
+        <Typography sx={{ marginBottom: '1rem'}}>Select a user to add to the family:</Typography>
         <FormControl fullWidth>
           <InputLabel id="user-select-label">User</InputLabel>
           <Select

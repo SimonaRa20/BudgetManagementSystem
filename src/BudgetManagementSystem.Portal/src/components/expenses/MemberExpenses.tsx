@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Card, CardContent, Container, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Container, Card, Box, CardContent, Button, Typography } from '@mui/material';
 import { ExpenseResponse } from '../models/expense';
 import { API_BASE_URL } from '../../apiConfig';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
+import { getCategoryTitle } from '../models/constants';
 
 interface MemberExpensesProps {
   // Add any additional props if needed
@@ -55,22 +56,41 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
         </Typography>
 
         </Box>
-        
-        
         <Card style={{ marginTop: '16px' }}>
           <CardContent>
             <Typography variant="h6">Expenses:</Typography>
-            {expenses.map((expense: ExpenseResponse) => (
-              <Box
-                key={expense.id}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-              >
-                {/* Display expense details here */}
-                <Typography>{`${expense.title} - ${expense.amount}`}</Typography>
-                {/* Add other expense details as needed */}
-                <Button onClick={() => handleViewDetails(expense)}>View Details</Button>
-              </Box>
-            ))}
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">Title</TableCell>
+                    <TableCell align="center">Amount</TableCell>
+                    <TableCell align="center">Category</TableCell>
+                    <TableCell align="center">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {expenses.map((expense: ExpenseResponse) => (
+                    <TableRow key={expense.id}>
+                      <TableCell align="center">{expense.title}</TableCell>
+                      <TableCell align="center">{expense.amount}</TableCell>
+                      <TableCell align="center">{getCategoryTitle(expense.category)}</TableCell>
+                      <TableCell align="center">
+                        <Box display="flex" justifyContent="center">
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleViewDetails(expense)}
+                          >
+                            View Details
+                          </Button>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </CardContent>
         </Card>
       </Box>

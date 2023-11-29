@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Divider, Box, Typography, Card, CardContent, Button, Container } from '@mui/material';
+import { Divider, Box, Typography, Card, CardContent, Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import MemberDetailsModal from './MemberDetailsModal';
 import DeleteMemberModal from './DeleteMemberModal';
 import { FamilyMemberResponse } from '../models/family-member';
@@ -143,51 +143,55 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
       <Card style={{ marginTop: '16px' }}>
         <CardContent>
           <Typography variant="h6">Members:</Typography>
-          {family.members.map((member: FamilyMemberResponse, index: number) => (
-            <React.Fragment key={member.familyMemberId}>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '1rem',
-                }}
-              >
-                <Typography>{`${member.name} ${member.surname}`}</Typography>
-                <Box style={{ display: 'flex', gap: '8px' }}>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}`)}
-                  >
-                    Check Budget
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleOpenMemberModal(member)}
-                  >
-                    View Details
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleOpenUpdateModal(member)}
-                  >
-                    Update Type
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleOpenDeleteModal(member)}
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </Box>
-              {index < family.members.length - 1 && <Divider />}
-            </React.Fragment>
-          ))}
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name & Surname</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {family.members.map((member: FamilyMemberResponse) => (
+                  <TableRow key={member.familyMemberId}>
+                    <TableCell>{`${member.name} ${member.surname}`}</TableCell>
+                    <TableCell align="right">
+                      <Box display="flex" justifyContent={'flex-end'} gap={1} marginLeft="auto">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}`)}
+                        >
+                          Check Budget
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleOpenMemberModal(member)}
+                        >
+                          View Details
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleOpenUpdateModal(member)}
+                        >
+                          Update Type
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleOpenDeleteModal(member)}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CardContent>
       </Card>
       <AddMemberModal
