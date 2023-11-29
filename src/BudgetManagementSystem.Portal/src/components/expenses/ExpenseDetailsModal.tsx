@@ -1,5 +1,20 @@
 import React from 'react';
-import { Modal, Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+} from '@mui/material';
 import { ExpenseResponse } from '../models/expense';
 import { getCategoryTitle } from '../models/constants';
 
@@ -11,29 +26,16 @@ interface ExpenseDetailsModalProps {
 
 const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClose, expense }) => {
   return (
-    <Modal
+    <Dialog
       open={isOpen}
       onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-description"
     >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 600, // Adjust the width as needed
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <Typography variant="h6" id="modal-modal-title">
-          Expense Details
-        </Typography>
+      <DialogTitle id="dialog-title">Expense Details</DialogTitle>
+      <DialogContent>
         {expense && (
-          <TableContainer component={Paper} sx={{ marginTop: '2rem'}}>
+          <TableContainer component={Paper} sx={{ marginTop: '1rem' }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -56,11 +58,15 @@ const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClo
             </Table>
           </TableContainer>
         )}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-          <Button variant="contained" color="primary" onClick={onClose}>Close</Button>
+      </DialogContent>
+      <DialogActions>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="contained" color="primary" onClick={onClose} sx={{marginRight: '0.5rem', marginBottom: '0.5rem'}}>
+            Close
+          </Button>
         </Box>
-      </Box>
-    </Modal>
+      </DialogActions>
+    </Dialog>
   );
 };
 

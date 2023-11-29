@@ -33,7 +33,8 @@ const DeleteFamilyModal: React.FC<DeleteFamilyModalProps> = ({ open, onClose, fa
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleConfirmDelete} color="secondary">
+        <Button  variant="contained"
+            color="error" onClick={handleConfirmDelete}>
           Delete
         </Button>
       </DialogActions>
