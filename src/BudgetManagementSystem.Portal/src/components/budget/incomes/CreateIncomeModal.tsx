@@ -111,7 +111,7 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
   const handleCreateIncome = async () => {
     try {
       if (!validateForm()) {
-        // Do not proceed with the expense creation if the form is not valid
+        // Do not proceed with the income creation if the form is not valid
         return;
       }
 
@@ -124,6 +124,13 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
         }
       );
       onIncomeCreated(); // Trigger the callback
+      setNewIncome({ // Reset the form state
+        title: '',
+        category: IncomeCategories.Salary,
+        amount: 0,
+        description: '',
+        time: new Date(),
+      });
       onClose(); // Close the modal only if the creation is successful
     } catch (error: any) {
       console.error(

@@ -159,7 +159,7 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
                       <Box display="flex" justifyContent={'flex-end'} gap={1} marginLeft="auto">
                         <Button
                           variant="contained"
-                          color="success"
+                          color="warning"
                           onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}/expenses`)}
                         >
                           Check expenses

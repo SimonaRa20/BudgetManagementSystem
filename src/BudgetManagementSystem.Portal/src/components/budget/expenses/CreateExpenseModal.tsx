@@ -124,13 +124,31 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
         }
       );
       onExpenseCreated(); // Trigger the callback
-      onClose(); // Close the modal only if the creation is successful
+      handleClose(); // Reset the form state
     } catch (error: any) {
       console.error(
         'Failed to create expense:',
         error.response?.data || error.message
       );
     }
+  };
+
+  const handleClose = () => {
+    setNewExpense({
+      title: '',
+      category: ExpenseCategories.Rent,
+      amount: 0,
+      description: '',
+      time: new Date(),
+    });
+
+    setErrors({
+      title: '',
+      amount: '',
+      description: '',
+    });
+
+    onClose(); // Close the modal
   };
 
   return (
