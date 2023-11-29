@@ -8,7 +8,6 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { ExpenseCategories, getExpensesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';

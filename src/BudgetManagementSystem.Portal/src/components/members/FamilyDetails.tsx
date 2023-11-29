@@ -22,7 +22,7 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userRole } = useAuth();
   const navigate = useNavigate();
 
   const getFamilyEndpoint = `${API_BASE_URL}/api/Families/${familyId}`;
@@ -116,6 +116,8 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
     }
   };
 
+  const expectedRole = 'Owner';
+
   if (!isAuthenticated) {
     return (
       <Container>
@@ -136,9 +138,11 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
         <Typography component="h1" variant="h5">
           {family.title}
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleOpenAddMemberModal}>
-          Add New Member
-        </Button>
+        {userRole === expectedRole && (
+          <Button variant="contained" color="primary" onClick={handleOpenAddMemberModal}>
+            Add New Member
+          </Button>
+        )}
       </Box>
       <Card style={{ marginTop: '16px' }}>
         <CardContent>
@@ -178,20 +182,24 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
                         >
                           View Details
                         </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleOpenUpdateModal(member)}
-                        >
-                          Update Type
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={() => handleOpenDeleteModal(member)}
-                        >
-                          Delete
-                        </Button>
+                        {userRole === expectedRole && (
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleOpenUpdateModal(member)}
+                            >
+                              Update Type
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => handleOpenDeleteModal(member)}
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
                       </Box>
                     </TableCell>
                   </TableRow>

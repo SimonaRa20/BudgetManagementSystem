@@ -21,7 +21,7 @@ namespace BudgetManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> GetUsers()
         {
             try

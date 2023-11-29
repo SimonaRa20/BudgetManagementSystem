@@ -11,6 +11,7 @@ import theme from './theme';
 import Home from './Home';
 import MemberExpenses from './components/budget/expenses/MemberExpenses';
 import MemberIncomes from './components/budget/incomes/MemberIncomes';
+import Users from './components/users/Users';
 
 
 const App: React.FC = () => {
@@ -28,6 +29,7 @@ const App: React.FC = () => {
               <Route path="/family/:familyId" element={<FamilyDetails />} />
               <Route path="/family/:familyId/member/:memberId/expenses" element={<MemberExpenses />} />
               <Route path="/family/:familyId/member/:memberId/incomes" element={<MemberIncomes />} />
+              <Route path="/users" element={<Users />} />
             </Routes>
           </div>
         </Router>

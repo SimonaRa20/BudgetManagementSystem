@@ -90,11 +90,7 @@ export enum ExpenseCategories {
     Other = 7,
   }
   
-  export const Role = {
-    Owner: 'Owner',
-    Admin: 'Admin',
-  };
-  
+  export type UserRole = 'Owner' | 'Admin';
   
   export const getMemberTypeText = (type: MemberType): string => {
     switch (type) {

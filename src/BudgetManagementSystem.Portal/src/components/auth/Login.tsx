@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../../apiConfig';
 import { UserLoginRequest, UserLoginResponse } from '../models/auth'; // Assuming auth.ts is in the same folder
+import { UserRole } from '../models/constants';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -31,8 +32,15 @@ const Login: React.FC = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshtoken', refreshtoken);
 
-      login();
-      navigate('/families');
+      const userRole: UserRole = role as UserRole;
+      login(userRole);
+      if (userRole === 'Owner') {
+        navigate('/families');
+      } else if (userRole === 'Admin') {
+        navigate('/users');
+      } else {
+        // Handle other roles as needed
+      }
       
     } catch (error: any) {
       setError((error.response?.data as string) || error.message);

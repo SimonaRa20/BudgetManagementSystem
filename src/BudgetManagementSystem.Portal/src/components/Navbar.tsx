@@ -3,10 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider, Hidden, Paper, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import { UserRole } from './models/constants';
 import { useAuth } from './context/AuthContext';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, userRole, logout } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -42,10 +43,20 @@ const Navbar: React.FC = () => {
 
         <Hidden smDown>
           <Box style={{ display: 'flex', alignItems: 'center' }}>
-            {isAuthenticated && (
-              <Button color="inherit" component={Link} to="/families">
-                Families
+            {isAuthenticated && userRole === 'Owner' && (
+              <>
+                <Button color="inherit" component={Link} to="/families">
+                  Families
+                </Button>
+                {/* Add other links accessible to users */}
+              </>
+            )}
+
+            {isAuthenticated && userRole === 'Admin' && (
+              <Button color="inherit" component={Link} to="/users">
+                Users
               </Button>
+              // You can add more admin-specific links if needed
             )}
 
             {!isAuthenticated && (
@@ -78,7 +89,19 @@ const Navbar: React.FC = () => {
           <Divider />
           <Paper sx={{ width: '50vw', minWidth: 250, height: '100%' }}>
             <List>
-              {isAuthenticated && (
+              {isAuthenticated && userRole === 'Admin' &&(
+                <>
+                  <ListItem button component={Link} to="/users">
+                    <ListItemText primary="Users" />
+                  </ListItem>
+                  <Divider />
+                  <ListItem button onClick={handleLogout}>
+                    <ListItemText primary="Logout" />
+                  </ListItem>
+                </>
+              )}
+
+              {isAuthenticated && userRole === 'Owner' &&(
                 <>
                   <ListItem button component={Link} to="/families">
                     <ListItemText primary="Families" />

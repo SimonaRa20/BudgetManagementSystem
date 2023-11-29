@@ -3,15 +3,15 @@ import axios from 'axios';
 import { Box, Grid, Card, CardContent, Typography, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_BASE_URL } from '../../apiConfig';
 import CreateFamilyModal from './CreateFamilyModal';
 import DeleteFamilyModal from './DeleteFamilyModal';
 import UpdateFamilyModal from './UpdateFamilyModal';
 import { FamilyResponse } from '../models/family';
+import { API_BASE_URL } from '../../apiConfig';
 
 const Families: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userRole } = useAuth();
   const [families, setFamilies] = useState<FamilyResponse[]>([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -95,10 +95,12 @@ const Families: React.FC = () => {
     }
   };
 
+  const expectedRole = 'Owner';
+
   return (
     <Container>
       <Box style={{ marginTop: '2rem' }}>
-        {isAuthenticated ? (
+        {isAuthenticated && userRole === expectedRole ? (
           <>
             <Box
               style={{
@@ -184,7 +186,9 @@ const Families: React.FC = () => {
           </>
         ) : (
           <Typography variant="h6">
-            Please login to view families.
+            {isAuthenticated
+              ? "You don't have permissions."
+              : 'Please login to view families.'}
           </Typography>
         )}
       </Box>
