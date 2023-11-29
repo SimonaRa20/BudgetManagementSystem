@@ -15,16 +15,16 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { ExpenseResponse } from '../../models/expense';
-import { getExpensesCategoryTitle } from '../../models/constants';
+import { IncomeResponse } from '../../models/income';
+import { getIncomesCategoryTitle } from '../../models/constants';
 
-interface ExpenseDetailsModalProps {
+interface IncomeDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  expense: ExpenseResponse | null;
+  income: IncomeResponse | null;
 }
 
-const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClose, expense }) => {
+const IncomeDetailsModal: React.FC<IncomeDetailsModalProps> = ({ isOpen, onClose, income }) => {
   return (
     <Dialog
       open={isOpen}
@@ -32,9 +32,9 @@ const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClo
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
-      <DialogTitle id="dialog-title">Expense Details</DialogTitle>
+      <DialogTitle id="dialog-title">Income Details</DialogTitle>
       <DialogContent>
-        {expense && (
+        {income && (
           <TableContainer component={Paper} sx={{ marginTop: '1rem' }}>
             <Table>
               <TableHead>
@@ -48,11 +48,11 @@ const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClo
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{expense.title}</TableCell>
-                  <TableCell>{getExpensesCategoryTitle(expense.category)}</TableCell>
-                  <TableCell>{expense.amount}</TableCell>
-                  <TableCell>{expense.description}</TableCell>
-                  <TableCell>{new Date(expense.time).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}</TableCell>
+                  <TableCell>{income.title}</TableCell>
+                  <TableCell>{getIncomesCategoryTitle(income.category)}</TableCell>
+                  <TableCell>{income.amount}</TableCell>
+                  <TableCell>{income.description}</TableCell>
+                  <TableCell>{new Date(income.time).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -70,4 +70,4 @@ const ExpenseDetailsModal: React.FC<ExpenseDetailsModalProps> = ({ isOpen, onClo
   );
 };
 
-export default ExpenseDetailsModal;
+export default IncomeDetailsModal;

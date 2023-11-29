@@ -160,9 +160,16 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
                         <Button
                           variant="contained"
                           color="success"
-                          onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}`)}
+                          onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}/expenses`)}
                         >
-                          Check Budget
+                          Check expenses
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => navigate(`/family/${familyId}/member/${member.familyMemberId}/incomes`)}
+                        >
+                          Check incomes
                         </Button>
                         <Button
                           variant="contained"

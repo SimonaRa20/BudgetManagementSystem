@@ -9,14 +9,14 @@ import {
   Button,
 } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { ExpenseCategories, getExpensesCategoryTitle } from '../../models/constants';
+import { IncomeCategories, getIncomesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
 
-interface CreateExpenseModalProps {
+interface CreateIncomeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExpenseCreated: () => void;
+  onIncomeCreated: () => void;
   familyId: string;
   memberId: string;
 }
@@ -29,16 +29,16 @@ function getEnumValue(enumObject: any, key: string): any {
   return enumObject[key];
 }
 
-const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
+const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
   isOpen,
   onClose,
-  onExpenseCreated,
+  onIncomeCreated,
   familyId,
   memberId,
 }) => {
-  const [newExpense, setNewExpense] = useState({
+  const [newIncome, setNewIncome] = useState({
     title: '',
-    category: ExpenseCategories.Rent,
+    category: IncomeCategories.Salary,
     amount: 0,
     description: '',
     time: new Date(), // Initialize with the current date
@@ -54,8 +54,8 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = event.target;
-    setNewExpense((prevExpense) => ({
-      ...prevExpense,
+    setNewIncome((prevIncome) => ({
+      ...prevIncome,
       [name]: value,
     }));
 
@@ -66,10 +66,10 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
   const handleCategoryChange = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    const selectedCategory = event.target.value as ExpenseCategories;
+    const selectedCategory = event.target.value as IncomeCategories;
 
-    setNewExpense((prevExpense) => ({
-      ...prevExpense,
+    setNewIncome((prevIncome) => ({
+      ...prevIncome,
       category: selectedCategory,
     }));
   };
@@ -78,8 +78,8 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const date = new Date(event.target.value);
-    setNewExpense((prevExpense) => ({
-      ...prevExpense,
+    setNewIncome((prevIncome) => ({
+      ...prevIncome,
       time: date,
     }));
   };
@@ -88,17 +88,17 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
     let isValid = true;
     const newErrors: any = {};
 
-    if (!newExpense.title) {
+    if (!newIncome.title) {
       newErrors.title = 'Title is required';
       isValid = false;
     }
 
-    if (newExpense.amount <= 0) {
+    if (newIncome.amount <= 0) {
       newErrors.amount = 'Amount must be greater than 0';
       isValid = false;
     }
 
-    if (!newExpense.description) {
+    if (!newIncome.description) {
       newErrors.description = 'Description is required';
       isValid = false;
     }
@@ -108,7 +108,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
     return isValid;
   };
 
-  const handleCreateExpense = async () => {
+  const handleCreateIncome = async () => {
     try {
       if (!validateForm()) {
         // Do not proceed with the expense creation if the form is not valid
@@ -117,17 +117,17 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
 
       const token = localStorage.getItem('token');
       await axios.post(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses`,
-        newExpense,
+        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes`,
+        newIncome,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      onExpenseCreated(); // Trigger the callback
+      onIncomeCreated(); // Trigger the callback
       onClose(); // Close the modal only if the creation is successful
     } catch (error: any) {
       console.error(
-        'Failed to create expense:',
+        'Failed to create income:',
         error.response?.data || error.message
       );
     }
@@ -135,12 +135,12 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Create New Expense</DialogTitle>
+      <DialogTitle>Create New Income</DialogTitle>
       <DialogContent>
         <TextField
           label="Title"
           name="title"
-          value={newExpense.title}
+          value={newIncome.title}
           onChange={handleCreateFormChange}
           fullWidth
           margin="normal"
@@ -151,17 +151,17 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
           select
           label="Category"
           name="category"
-          value={newExpense.category}
+          value={newIncome.category}
           onChange={handleCategoryChange}
           fullWidth
           margin="normal"
         >
-          {getEnumKeys(ExpenseCategories).map((categoryKey) => (
+          {getEnumKeys(IncomeCategories).map((categoryKey) => (
             <MenuItem
               key={categoryKey}
-              value={getEnumValue(ExpenseCategories, categoryKey)}
+              value={getEnumValue(IncomeCategories, categoryKey)}
             >
-              {getExpensesCategoryTitle(getEnumValue(ExpenseCategories, categoryKey))}
+              {getIncomesCategoryTitle(getEnumValue(IncomeCategories, categoryKey))}
             </MenuItem>
           ))}
         </TextField>
@@ -169,7 +169,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
           label="Amount"
           name="amount"
           type="number"
-          value={newExpense.amount}
+          value={newIncome.amount}
           onChange={handleCreateFormChange}
           fullWidth
           margin="normal"
@@ -183,7 +183,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
           label="Date"
           name="time"
           type="date"
-          value={newExpense.time.toISOString().split('T')[0]}
+          value={newIncome.time.toISOString().split('T')[0]}
           onChange={handleDateChange}
           fullWidth
           margin="normal"
@@ -191,7 +191,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
         <TextField
           label="Description"
           name="description"
-          value={newExpense.description}
+          value={newIncome.description}
           onChange={handleCreateFormChange}
           fullWidth
           multiline
@@ -208,7 +208,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={handleCreateExpense}
+          onClick={handleCreateIncome}
         >
           Create
         </Button>
@@ -217,4 +217,4 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
   );
 };
 
-export default CreateExpenseModal;
+export default CreateIncomeModal;

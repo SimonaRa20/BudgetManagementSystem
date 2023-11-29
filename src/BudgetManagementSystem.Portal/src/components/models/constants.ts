@@ -12,7 +12,7 @@ export enum ExpenseCategories {
     Other = 10,
   }
 
-  export const getCategoryTitle = (category: ExpenseCategories): string => {
+  export const getExpensesCategoryTitle = (category: ExpenseCategories): string => {
     switch (category) {
       case ExpenseCategories.Rent:
         return 'Rent';
@@ -42,15 +42,41 @@ export enum ExpenseCategories {
   };
   
   export enum IncomeCategories {
-    Salary,
-    Bonus,
-    Investment,
-    Rental,
-    Freelance,
-    Gift,
-    Pension,
-    DailyAllowance,
-    Other,
+    Salary = 0,
+    Bonus = 1,
+    Investment = 2,
+    Rental = 3,
+    Freelance = 4,
+    Gift = 5,
+    Pension = 6,
+    DailyAllowance = 7,
+    Other = 8,
+  }
+
+  
+  export const getIncomesCategoryTitle = (category: IncomeCategories): string => {
+    switch (category) {
+      case IncomeCategories.Salary:
+        return 'Salary';
+      case IncomeCategories.Bonus:
+        return 'Bonus';
+      case IncomeCategories.Investment:
+        return 'Investment';
+      case IncomeCategories.Rental:
+        return 'Rental';
+      case IncomeCategories.Freelance:
+        return 'Freelance';
+      case IncomeCategories.Gift:
+        return 'Gift';
+      case IncomeCategories.Pension:
+        return 'Pension';
+      case IncomeCategories.DailyAllowance:
+        return 'DailyAllowance';
+      case IncomeCategories.Other:
+        return 'Other';
+      default:
+        return '';
+    }
   }
   
   export enum MemberType {

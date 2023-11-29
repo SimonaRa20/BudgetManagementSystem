@@ -8,31 +8,31 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import { ExpenseCategories, getExpensesCategoryTitle } from '../../models/constants';
+import { IncomeCategories, getIncomesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
 
-interface UpdateExpenseModalProps {
+interface UpdateIncomeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdateSuccess: () => void;
-  expenseId: number;
+  incomeId: number;
   familyId: string;
   memberId: string;
 }
 
 // This component is similar to CreateExpenseModal with modifications for updating an existing expense
-const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
+const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   isOpen,
   onClose,
   onUpdateSuccess,
-  expenseId,
+  incomeId: incomeId,
   familyId,
   memberId,
 }) => {
-  const [updatedExpense, setUpdatedExpense] = useState({
+  const [updatedIncome, setUpdatedIncome] = useState({
     title: '',
-    category: ExpenseCategories.Rent,
+    category: IncomeCategories.Salary,
     amount: 0,
     description: '',
     time: new Date(),
@@ -43,50 +43,50 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     const fetchExpenseDetails = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes/${incomeId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const expenseDetails = response.data;
-        setUpdatedExpense({
-          title: expenseDetails.title,
-          category: expenseDetails.category,
-          amount: expenseDetails.amount,
-          description: expenseDetails.description,
-          time: new Date(expenseDetails.time),
+        const incomeDetails = response.data;
+        setUpdatedIncome({
+          title: incomeDetails.title,
+          category: incomeDetails.category,
+          amount: incomeDetails.amount,
+          description: incomeDetails.description,
+          time: new Date(incomeDetails.time),
         });
       } catch (error:any) {
-        console.error('Failed to fetch expense details:', error.response?.data || error.message);
+        console.error('Failed to fetch income details:', error.response?.data || error.message);
       }
     };
 
-    if (isOpen && expenseId) {
+    if (isOpen && incomeId) {
       fetchExpenseDetails();
     }
-  }, [isOpen, expenseId, familyId, memberId]);
+  }, [isOpen, incomeId, familyId, memberId]);
 
   const handleUpdateFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setUpdatedExpense((prevExpense) => ({
-      ...prevExpense,
+    setUpdatedIncome((prevIncome) => ({
+      ...prevIncome,
       [name]: value,
     }));
   };
 
   const handleCategoryChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const selectedCategory = event.target.value as ExpenseCategories;
-    setUpdatedExpense((prevExpense) => ({
-      ...prevExpense,
+    const selectedCategory = event.target.value as IncomeCategories;
+    setUpdatedIncome((prevIncome) => ({
+      ...prevIncome,
       category: selectedCategory,
     }));
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const date = new Date(event.target.value);
-    setUpdatedExpense((prevExpense) => ({
-      ...prevExpense,
+    setUpdatedIncome((prevIncome) => ({
+      ...prevIncome,
       time: date,
     }));
   };
@@ -95,8 +95,8 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseId}`,
-        updatedExpense,
+        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes/${incomeId}`,
+        updatedIncome,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -104,7 +104,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
       onUpdateSuccess(); // Trigger the callback
     } catch (error:any) {
       console.error(
-        'Failed to update expense:',
+        'Failed to update income:',
         error.response?.data || error.message
       );
     } finally {
@@ -114,12 +114,12 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Update Expense</DialogTitle>
+      <DialogTitle>Update Income</DialogTitle>
       <DialogContent>
         <TextField
           label="Title"
           name="title"
-          value={updatedExpense.title}
+          value={updatedIncome.title}
           onChange={handleUpdateFormChange}
           fullWidth
           margin="normal"
@@ -128,14 +128,14 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
           select
           label="Category"
           name="category"
-          value={updatedExpense.category}
+          value={updatedIncome.category}
           onChange={handleCategoryChange}
           fullWidth
           margin="normal"
         >
-          {Object.values(ExpenseCategories).map((category) => (
+          {Object.values(IncomeCategories).map((category) => (
             <MenuItem key={category} value={category}>
-              {getExpensesCategoryTitle(category as ExpenseCategories)}
+              {getIncomesCategoryTitle(category as IncomeCategories)}
             </MenuItem>
           ))}
         </TextField>
@@ -143,7 +143,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
           label="Amount"
           name="amount"
           type="number"
-          value={updatedExpense.amount}
+          value={updatedIncome.amount}
           onChange={handleUpdateFormChange}
           fullWidth
           margin="normal"
@@ -155,7 +155,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
           label="Date"
           name="time"
           type="date"
-          value={updatedExpense.time.toISOString().split('T')[0]}
+          value={updatedIncome.time.toISOString().split('T')[0]}
           onChange={handleDateChange}
           fullWidth
           margin="normal"
@@ -163,7 +163,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
         <TextField
           label="Description"
           name="description"
-          value={updatedExpense.description}
+          value={updatedIncome.description}
           onChange={handleUpdateFormChange}
           fullWidth
           multiline
@@ -187,4 +187,4 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
   );
 };
 
-export default UpdateExpenseModal;
+export default UpdateIncomeModal;
