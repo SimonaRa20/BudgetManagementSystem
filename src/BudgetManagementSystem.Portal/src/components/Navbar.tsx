@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider, Hidden, Paper, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import { UserRole } from './models/constants';
 import { useAuth } from './context/AuthContext';
 
 const Navbar: React.FC = () => {
@@ -48,7 +47,6 @@ const Navbar: React.FC = () => {
                 <Button color="inherit" component={Link} to="/families">
                   Families
                 </Button>
-                {/* Add other links accessible to users */}
               </>
             )}
 
@@ -56,7 +54,6 @@ const Navbar: React.FC = () => {
               <Button color="inherit" component={Link} to="/users">
                 Users
               </Button>
-              // You can add more admin-specific links if needed
             )}
 
             {!isAuthenticated && (

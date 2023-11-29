@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../../apiConfig';
-import { UserLoginRequest, UserLoginResponse } from '../models/auth'; // Assuming auth.ts is in the same folder
+import { UserLoginRequest, UserLoginResponse } from '../models/auth';
 import { UserRole } from '../models/constants';
 
 const Login: React.FC = () => {

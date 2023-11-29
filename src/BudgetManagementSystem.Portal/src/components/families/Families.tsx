@@ -170,7 +170,7 @@ const Families: React.FC = () => {
               open={openUpdateModal}
               onClose={handleCloseUpdateModal}
               familyId={updateFamilyId}
-              onUpdateSuccess={handleUpdateSuccess} // Pass the callback
+              onUpdateSuccess={handleUpdateSuccess}
             />
             <CreateFamilyModal
               open={openCreateModal}

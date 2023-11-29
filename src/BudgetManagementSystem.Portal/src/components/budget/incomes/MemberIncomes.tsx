@@ -7,7 +7,6 @@ import { API_BASE_URL } from '../../../apiConfig';
 import IncomeDetailsModal from './../incomes/IncomeDetailsModal';
 import IncomeDeleteModal from './IncomeDeleteModal';
 import { getIncomesCategoryTitle } from '../../models/constants';
-
 import UpdateIncomeModal from './../incomes/UpdateIncomeModal';
 import CreateIncomeModal from './CreateIncomeModal';
 

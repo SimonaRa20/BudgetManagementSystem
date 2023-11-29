@@ -35,7 +35,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({ open, onClose, on
 
             const createdFamily = response.data;
             onSuccess(createdFamily);
-            handleClose(); // Reset the form state
+            handleClose();
         } catch (error: any) {
             const errorResponse = error.response?.data as string;
             const errorMessage = errorResponse || error.message;

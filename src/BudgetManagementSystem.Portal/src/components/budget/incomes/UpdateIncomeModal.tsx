@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Button,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button } from '@mui/material';
 import { IncomeCategories, getIncomesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
@@ -21,7 +13,6 @@ interface UpdateIncomeModalProps {
   memberId: string;
 }
 
-// This component is similar to CreateExpenseModal with modifications for updating an existing expense
 const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   isOpen,
   onClose,
@@ -38,7 +29,6 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
     time: new Date(),
   });
 
-  // Fetch the existing expense details when the modal is opened
   React.useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
@@ -101,14 +91,14 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      onUpdateSuccess(); // Trigger the callback
+      onUpdateSuccess();
     } catch (error:any) {
       console.error(
         'Failed to update income:',
         error.response?.data || error.message
       );
     } finally {
-      onClose(); // Close the modal
+      onClose();
     }
   };
 

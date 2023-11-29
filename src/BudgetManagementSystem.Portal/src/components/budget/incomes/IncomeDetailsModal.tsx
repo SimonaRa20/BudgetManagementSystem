@@ -1,20 +1,5 @@
 import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Box,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Table, TableBody, TableCell, TableContainer, TableHead,  TableRow, Paper, Box } from '@mui/material';
 import { IncomeResponse } from '../../models/income';
 import { getIncomesCategoryTitle } from '../../models/constants';
 

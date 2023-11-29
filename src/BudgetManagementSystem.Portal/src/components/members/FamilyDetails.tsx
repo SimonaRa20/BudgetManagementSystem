@@ -103,7 +103,6 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
         };
       });
 
-      // Navigation logic
       if (family && family.members.length === 1) {
         navigate('/families');
       } else {

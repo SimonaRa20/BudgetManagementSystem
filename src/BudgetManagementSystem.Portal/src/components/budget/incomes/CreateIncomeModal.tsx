@@ -32,7 +32,7 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
     category: IncomeCategories.Salary,
     amount: 0,
     description: '',
-    time: new Date(), // Initialize with the current date
+    time: new Date(),
   });
 
   const [errors, setErrors] = useState({
@@ -50,7 +50,6 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
       [name]: value,
     }));
 
-    // Clear the error for the field when the user starts typing
     setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
@@ -102,7 +101,6 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
   const handleCreateIncome = async () => {
     try {
       if (!validateForm()) {
-        // Do not proceed with the income creation if the form is not valid
         return;
       }
 
@@ -114,15 +112,15 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      onIncomeCreated(); // Trigger the callback
-      setNewIncome({ // Reset the form state
+      onIncomeCreated();
+      setNewIncome({
         title: '',
         category: IncomeCategories.Salary,
         amount: 0,
         description: '',
         time: new Date(),
       });
-      onClose(); // Close the modal only if the creation is successful
+      onClose();
     } catch (error: any) {
       console.error(
         'Failed to create income:',

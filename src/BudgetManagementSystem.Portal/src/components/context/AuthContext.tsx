@@ -1,6 +1,4 @@
-// AuthContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { UserRole } from '../models/constants';
 
 type Role = 'Owner' | 'Admin';
 
@@ -23,13 +21,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
   const [userRole, setUserRole] = useState<Role | null>(
     (localStorage.getItem('userRole') as Role) || null
-  ); // Ensure a null fallback if 'userRole' is not present in localStorage
+  );
 
   const login = (role: Role) => {
     setIsAuthenticated(true);
     setUserRole(role);
     localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('userRole', role); // Update this line to ensure 'role' is converted to a string
+    localStorage.setItem('userRole', role);
   };
 
   const logout = () => {

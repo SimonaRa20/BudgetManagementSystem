@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Button,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button } from '@mui/material';
 import { ExpenseCategories, getExpensesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
@@ -40,7 +32,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
     category: ExpenseCategories.Rent,
     amount: 0,
     description: '',
-    time: new Date(), // Initialize with the current date
+    time: new Date(),
   });
 
   const [errors, setErrors] = useState({
@@ -58,7 +50,6 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
       [name]: value,
     }));
 
-    // Clear the error for the field when the user starts typing
     setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
@@ -110,7 +101,6 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
   const handleCreateExpense = async () => {
     try {
       if (!validateForm()) {
-        // Do not proceed with the expense creation if the form is not valid
         return;
       }
 
@@ -122,8 +112,8 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      onExpenseCreated(); // Trigger the callback
-      handleClose(); // Reset the form state
+      onExpenseCreated();
+      handleClose();
     } catch (error: any) {
       console.error(
         'Failed to create expense:',
@@ -147,7 +137,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
       description: '',
     });
 
-    onClose(); // Close the modal
+    onClose();
   };
 
   return (
