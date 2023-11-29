@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Divider, Box, Typography, Card, CardContent, Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Typography, Card, CardContent, Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import MemberDetailsModal from './MemberDetailsModal';
 import DeleteMemberModal from './DeleteMemberModal';
 import { FamilyMemberResponse } from '../models/family-member';

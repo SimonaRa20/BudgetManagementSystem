@@ -1,4 +1,3 @@
-// ExpenseDetailsModal.tsx
 import React from 'react';
 import { Modal, Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { ExpenseResponse } from '../models/expense';
