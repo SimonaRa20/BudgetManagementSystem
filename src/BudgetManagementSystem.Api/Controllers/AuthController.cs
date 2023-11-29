@@ -35,6 +35,25 @@ namespace BudgetManagementSystem.Api.Controllers
         [HttpPost]
         public ActionResult Login([FromBody] UserLoginRequest userLogin)
         {
+            List<string> errors = new List<string>();
+            if (userLogin.Email.IsNullOrEmpty() || !userLogin.Email.Contains('@'))
+            {
+                errors.Add("Invalid email format.");
+            }
+
+            if (string.IsNullOrWhiteSpace(userLogin.Password))
+            {
+                errors.Add("Need user password.");
+            }
+
+            if (errors.Count > 0)
+            {
+                return new ObjectResult(errors)
+                {
+                    StatusCode = (int)HttpStatusCode.UnprocessableEntity
+                };
+            }
+
             var user = Authenticate(userLogin);
             if (user != null)
             {
@@ -46,7 +65,7 @@ namespace BudgetManagementSystem.Api.Controllers
                 return Created("", userLoginResponse);
             }
 
-            return NotFound("Invalid email or password. Please try again.");
+            return BadRequest("Invalid email or password. Please try again.");
         }
 
         [Route("Register")]
@@ -131,43 +150,6 @@ namespace BudgetManagementSystem.Api.Controllers
             {
                 StatusCode = (int)HttpStatusCode.UnprocessableEntity
             };
-        }
-
-        [Route("Logout")]
-        [HttpPost]
-        [Authorize] // Add the [Authorize] attribute to secure the endpoint
-        public ActionResult Logout()
-        {
-            try
-            {
-                // Get the current user's claims, including the userId
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest("User not authenticated.");
-                }
-
-                // Remove the user's refresh token from the database
-                RemoveRefreshToken(int.Parse(userId));
-
-                return Ok("Logged out successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while logging out.");
-            }
-        }
-
-        private void RemoveRefreshToken(int userId)
-        {
-            var existingRefreshToken = _dbContext.RefreshTokens.FirstOrDefault(rt => rt.UserId == userId);
-
-            if (existingRefreshToken != null)
-            {
-                _dbContext.RefreshTokens.Remove(existingRefreshToken);
-                _dbContext.SaveChanges();
-            }
         }
 
         private UserLoginResponse LoginResponse(UserDto user, string accessToken, string refreshToken)

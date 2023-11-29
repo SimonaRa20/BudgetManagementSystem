@@ -11,6 +11,24 @@ export enum ExpenseCategories {
     Subscription,
     Other,
   }
+
+  // Add this function to convert between numeric values and titles
+export const getCategoryTitle = (category: ExpenseCategories): string => {
+  switch (category) {
+    case ExpenseCategories.Rent: return 'Rent';
+    case ExpenseCategories.Groceries: return 'Groceries';
+    case ExpenseCategories.Transportation: return 'Transportation';
+    case ExpenseCategories.Utilities: return 'Utilities';
+    case ExpenseCategories.Entertainment: return 'Entertainment';
+    case ExpenseCategories.DinnerOut: return 'Dinner Out';
+    case ExpenseCategories.Travel: return 'Travel';
+    case ExpenseCategories.Healthcare: return 'Healthcare';
+    case ExpenseCategories.Education: return 'Education';
+    case ExpenseCategories.Subscription: return 'Subscription';
+    case ExpenseCategories.Other: return 'Other';
+    default: return '';
+  }
+};
   
   export enum IncomeCategories {
     Salary,

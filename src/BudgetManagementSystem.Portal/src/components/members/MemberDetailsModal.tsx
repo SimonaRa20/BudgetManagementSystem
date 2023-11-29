@@ -1,5 +1,19 @@
 import React from 'react';
-import { Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 import { FamilyMemberResponse } from '../models/family-member';
 import { getMemberTypeText } from '../models/constants';
 
@@ -16,13 +30,28 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ member, isOpen,
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>
-        {`${member.name} ${member.surname}`}
-      </DialogTitle>
+      <DialogTitle>Member details</DialogTitle>
       <DialogContent>
-        <Typography>{`Username: ${member.userName}`}</Typography>
-        <Typography>{`Email: ${member.email}`}</Typography>
-        <Typography>{`Type: ${getMemberTypeText(member.type)}`}</Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+              <TableCell>Name & Surname</TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Type</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+              <TableCell>{`${member.name} ${member.surname}`}</TableCell>
+                <TableCell>{member.userName}</TableCell>
+                <TableCell>{member.email}</TableCell>
+                <TableCell>{getMemberTypeText(member.type)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} variant="contained" color="secondary">
