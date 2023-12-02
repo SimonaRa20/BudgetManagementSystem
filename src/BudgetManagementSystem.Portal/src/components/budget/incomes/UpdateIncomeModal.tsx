@@ -17,7 +17,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   isOpen,
   onClose,
   onUpdateSuccess,
-  incomeId: incomeId,
+  incomeId,
   familyId,
   memberId,
 }) => {
@@ -30,10 +30,10 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   });
 
   React.useEffect(() => {
-    const fetchExpenseDetails = async () => {
+    const fetchIncomeDetails = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes/${incomeId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Incomes/${incomeId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -53,7 +53,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
     };
 
     if (isOpen && incomeId) {
-      fetchExpenseDetails();
+      fetchIncomeDetails();
     }
   }, [isOpen, incomeId, familyId, memberId]);
 

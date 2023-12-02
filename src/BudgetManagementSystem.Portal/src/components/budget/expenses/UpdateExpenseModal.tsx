@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button } from '@mui/material';
 import { ExpenseCategories, getExpensesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
+import { ExpenseRequest } from '../../models/expense';
 
 interface UpdateExpenseModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
   familyId,
   memberId,
 }) => {
-  const [updatedExpense, setUpdatedExpense] = useState({
+  const [updatedExpense, setUpdatedExpense] = useState<ExpenseRequest>({
     title: '',
     category: ExpenseCategories.Rent,
     amount: 0,
@@ -29,25 +30,28 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     time: new Date(),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Expenses/${expenseId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         const expenseDetails = response.data;
-        setUpdatedExpense({
-          title: expenseDetails.title,
-          category: expenseDetails.category,
-          amount: expenseDetails.amount,
-          description: expenseDetails.description,
-          time: new Date(expenseDetails.time),
-        });
-      } catch (error:any) {
+        console.log('Fetched Expense Details:', expenseDetails);
+
+        setUpdatedExpense((prevExpense) => ({
+          ...prevExpense,
+          title: expenseDetails.title || '',
+          category: expenseDetails.category || ExpenseCategories.Rent,
+          amount: expenseDetails.amount || 0,
+          description: expenseDetails.description || '',
+          time: expenseDetails.time ? new Date(expenseDetails.time) : new Date(),
+        }));
+      } catch (error: any) {
         console.error('Failed to fetch expense details:', error.response?.data || error.message);
       }
     };
@@ -74,12 +78,15 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(event.target.value);
+    const selectedDate = new Date(event.target.value);
+    selectedDate.setHours(0, 0, 0, 0); // Set the time to midnight
+  
     setUpdatedExpense((prevExpense) => ({
       ...prevExpense,
-      time: date,
+      time: selectedDate,
     }));
   };
+  
 
   const handleUpdateExpense = async () => {
     try {
@@ -92,7 +99,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
         }
       );
       onUpdateSuccess();
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(
         'Failed to update expense:',
         error.response?.data || error.message
