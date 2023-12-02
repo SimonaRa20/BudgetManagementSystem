@@ -28,7 +28,7 @@ const ExpenseDeleteModal: React.FC<ExpenseDeleteModalProps> = ({
     try {
       setIsDeleting(true);
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseId}`, {
+      await axios.delete(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Expenses/${expenseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       onDeleteSuccess();

@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace BudgetManagementSystem.Api.Controllers
 {
-    [Route("api/Families/{familyId}/Members/{memberId}/[controller]")]
+    [Route("api/Families/{familyId}/FamilyMembers/{memberId}/[controller]")]
     [ApiController]
     public class ExpensesController : Controller
     {

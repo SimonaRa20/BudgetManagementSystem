@@ -22,7 +22,7 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
   const [isCreateExpenseModalOpen, setIsCreateExpenseModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  const getExpensesEndpoint = `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses`;
+  const getExpensesEndpoint = `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Expenses`;
 
   const fetchMemberExpenses = async () => {
     try {

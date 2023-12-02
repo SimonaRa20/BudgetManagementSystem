@@ -22,7 +22,7 @@ const MemberIncomes: React.FC<MemberIncomesProps> = () => {
   const [isCreateIncomeModalOpen, setIsCreateIncomeModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  const getIncomesEndpoint = `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes`;
+  const getIncomesEndpoint = `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Incomes`;
 
   const fetchMemberIncomes = async () => {
     try {

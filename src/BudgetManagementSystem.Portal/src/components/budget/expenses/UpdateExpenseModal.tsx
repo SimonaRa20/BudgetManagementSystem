@@ -85,7 +85,7 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses/${expenseId}`,
+        `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Expenses/${expenseId}`,
         updatedExpense,
         {
           headers: { Authorization: `Bearer ${token}` },

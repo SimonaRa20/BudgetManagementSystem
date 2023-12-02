@@ -85,7 +85,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes/${incomeId}`,
+        `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Incomes/${incomeId}`,
         updatedIncome,
         {
           headers: { Authorization: `Bearer ${token}` },

@@ -106,7 +106,7 @@ const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
 
       const token = localStorage.getItem('token');
       await axios.post(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Expenses`,
+        `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Expenses`,
         newExpense,
         {
           headers: { Authorization: `Bearer ${token}` },

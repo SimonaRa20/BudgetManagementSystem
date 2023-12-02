@@ -28,7 +28,7 @@ const IncomeDeleteModal: React.FC<IncomeDeleteModalProps> = ({
     try {
       setIsDeleting(true);
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes/${incomeId}`, {
+      await axios.delete(`${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Incomes/${incomeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       onDeleteSuccess();

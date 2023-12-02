@@ -106,7 +106,7 @@ const CreateIncomeModal: React.FC<CreateIncomeModalProps> = ({
 
       const token = localStorage.getItem('token');
       await axios.post(
-        `${API_BASE_URL}/api/Families/${familyId}/Members/${memberId}/Incomes`,
+        `${API_BASE_URL}/api/Families/${familyId}/FamilyMembers/${memberId}/Incomes`,
         newIncome,
         {
           headers: { Authorization: `Bearer ${token}` },
