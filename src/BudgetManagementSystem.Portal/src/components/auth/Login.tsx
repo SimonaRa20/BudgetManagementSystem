@@ -93,7 +93,7 @@ const Login: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleLogin}
-            sx={{ fontFamily: "'Poppins', sans-serif" }}
+            sx={{ fontFamily: "'Poppins', sans-serif",transition: 'background-color 0.3s ease-in-out' }}
           >
             Login
           </Button>

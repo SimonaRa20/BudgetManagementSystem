@@ -117,7 +117,7 @@ const Register: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleRegister}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{fontFamily: "'Poppins', sans-serif", transition: 'background-color 0.3s ease-in-out'}}
           >
             Register
           </Button>
