@@ -33,8 +33,16 @@ const Register: React.FC = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Box style={{ marginTop: '2rem' }}>
-        <Typography component="h1" variant="h5" sx={{fontFamily: "'Poppins', sans-serif"}}>
+      <Box 
+        style={{ marginTop: '2rem' }}
+        sx={{
+          textAlign: 'center',
+          '@media (max-width: 768px)': {
+            textAlign: 'left',
+          },
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
           Register
         </Typography>
         <form>
@@ -55,7 +63,7 @@ const Register: React.FC = () => {
             autoFocus
             value={name}
             onChange={(e) => setName(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <TextField
             variant="outlined"
@@ -68,7 +76,7 @@ const Register: React.FC = () => {
             autoComplete="surname"
             value={surname}
             onChange={(e) => setSurname(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <TextField
             variant="outlined"
@@ -82,7 +90,7 @@ const Register: React.FC = () => {
             autoFocus
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <TextField
             variant="outlined"
@@ -95,7 +103,7 @@ const Register: React.FC = () => {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <TextField
             variant="outlined"
@@ -109,7 +117,7 @@ const Register: React.FC = () => {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            sx={{fontFamily: "'Poppins', sans-serif"}}
+            sx={{ fontFamily: "'Poppins', sans-serif" }}
           />
           <Button
             type="button"
@@ -117,7 +125,7 @@ const Register: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleRegister}
-            sx={{fontFamily: "'Poppins', sans-serif", transition: 'background-color 0.3s ease-in-out'}}
+            sx={{ fontFamily: "'Poppins', sans-serif", transition: 'background-color 0.3s ease-in-out' }}
           >
             Register
           </Button>

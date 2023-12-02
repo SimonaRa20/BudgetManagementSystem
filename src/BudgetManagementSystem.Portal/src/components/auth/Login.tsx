@@ -49,7 +49,15 @@ const Login: React.FC = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Box style={{ marginTop: '2rem' }}>
+      <Box 
+        style={{ marginTop: '2rem' }}
+        sx={{
+          textAlign: 'center',
+          '@media (max-width: 768px)': {
+            textAlign: 'left',
+          },
+        }}
+      >
         <Typography component="h1" variant="h5" sx={{ fontFamily: "'Poppins', sans-serif" }}>
           Login
         </Typography>
@@ -93,7 +101,7 @@ const Login: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleLogin}
-            sx={{ fontFamily: "'Poppins', sans-serif",transition: 'background-color 0.3s ease-in-out' }}
+            sx={{ fontFamily: "'Poppins', sans-serif", transition: 'background-color 0.3s ease-in-out' }}
           >
             Login
           </Button>
