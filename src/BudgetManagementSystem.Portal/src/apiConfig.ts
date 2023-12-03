@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://localhost:7025';
+export const API_BASE_URL = 'https://budgetmanagementsystemapi20231202234821.azurewebsites.net';
