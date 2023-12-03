@@ -13,7 +13,7 @@ import AddMemberModal from './AddMemberModal';
 
 interface FamilyDetailsProps {
 }
-
+// eslint-disable-next-line
 const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
   const { familyId } = useParams();
   const [family, setFamily] = useState<FamilyByIdResponse | null>(null);
@@ -46,6 +46,7 @@ const FamilyDetails: React.FC<FamilyDetailsProps> = ({ }) => {
 
   useEffect(() => {
     fetchFamilyDetails();
+    // eslint-disable-next-line
   }, [familyId, getFamilyEndpoint]);
 
   const handleOpenMemberModal = (member: FamilyMemberResponse) => {

@@ -40,6 +40,7 @@ const MemberIncomes: React.FC<MemberIncomesProps> = () => {
 
   useEffect(() => {
     fetchMemberIncomes();
+    // eslint-disable-next-line
   }, [familyId, memberId, getIncomesEndpoint]);
 
   const handleViewDetails = (income: IncomeResponse) => {

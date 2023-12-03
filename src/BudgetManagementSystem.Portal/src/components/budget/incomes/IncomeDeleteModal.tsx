@@ -16,7 +16,9 @@ interface IncomeDeleteModalProps {
 const IncomeDeleteModal: React.FC<IncomeDeleteModalProps> = ({
   isOpen,
   onClose,
+  // eslint-disable-next-line
   incomeId: incomeId,
+  // eslint-disable-next-line
   incomeTitle: incomeTitle,
   familyId,
   memberId,

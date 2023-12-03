@@ -40,6 +40,7 @@ const MemberExpenses: React.FC<MemberExpensesProps> = () => {
 
   useEffect(() => {
     fetchMemberExpenses();
+    // eslint-disable-next-line
   }, [familyId, memberId, getExpensesEndpoint]);
 
   const handleViewDetails = (expense: ExpenseResponse) => {

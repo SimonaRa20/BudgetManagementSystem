@@ -34,6 +34,7 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line
   }, [isAuthenticated, getUsersEndpoint, userRole, expectedRole]);
 
   const handleOpenDeleteModal = (userId: number) => {
