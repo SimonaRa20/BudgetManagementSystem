@@ -58,7 +58,7 @@ const Families: React.FC = () => {
       title: createdFamily.title,
       membersCount: createdFamily.membersCount,
     };
-  
+
     setFamilies((prevFamilies) => [...prevFamilies, family]);
   };
 
@@ -88,7 +88,7 @@ const Families: React.FC = () => {
       const response = await axios.get<FamilyResponse[]>(getFamiliesEndpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       setFamilies(response.data);
     } catch (error: any) {
       console.error('Failed to fetch families:', error.response?.data || error.message);
@@ -141,24 +141,21 @@ const Families: React.FC = () => {
                         >
                           Detailed info
                         </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleOpenUpdateModal(family.id)}
+                        >
+                          Update
+                        </Button>
                         {family.membersCount === 1 && (
-                          <>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => handleOpenUpdateModal(family.id)}
-                            >
-                              Update
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="error"
-                              onClick={() => handleOpenDeleteDialog(family.id)}
-                            >
-                              Delete
-                            </Button>
-                          </>
-
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => handleOpenDeleteDialog(family.id)}
+                          >
+                            Delete
+                          </Button>
                         )}
                       </Box>
                     </CardContent>
