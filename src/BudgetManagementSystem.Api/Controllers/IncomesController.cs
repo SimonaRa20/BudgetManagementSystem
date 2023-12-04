@@ -263,11 +263,6 @@ namespace BudgetManagementSystem.Api.Controllers
                     return NotFound("Income not found.");
                 }
 
-                if (loggedUserId != income.FamilyMember.UserId)
-                {
-                    return Forbid("You don't have permission to update this income.");
-                }
-
                 var errors = new List<string>();
 
                 if (string.IsNullOrWhiteSpace(incomeUpdate.Title))

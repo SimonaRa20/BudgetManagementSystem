@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button } from '@mui/material';
 import { IncomeCategories, getIncomesCategoryTitle } from '../../models/constants';
 import { API_BASE_URL } from '../../../apiConfig';
 import axios from 'axios';
+import { IncomeRequest } from '../../models/income';
 
 interface UpdateIncomeModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   familyId,
   memberId,
 }) => {
-  const [updatedIncome, setUpdatedIncome] = useState({
+  const [updatedIncome, setUpdatedIncome] = useState<IncomeRequest>({
     title: '',
     category: IncomeCategories.Salary,
     amount: 0,
@@ -29,7 +30,19 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
     time: new Date(),
   });
 
-  React.useEffect(() => {
+  const [validCategories] = useState<IncomeCategories[]>([
+    IncomeCategories.Salary,
+    IncomeCategories.Bonus,
+    IncomeCategories.Investment,
+    IncomeCategories.Rental,
+    IncomeCategories.Freelance,
+    IncomeCategories.Gift,
+    IncomeCategories.Pension,
+    IncomeCategories.DailyAllowance,
+    IncomeCategories.Other,
+  ]);
+
+  useEffect(() => {
     const fetchIncomeDetails = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -40,15 +53,18 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
         });
 
         const incomeDetails = response.data;
-        setUpdatedIncome({
-          title: incomeDetails.title,
-          category: incomeDetails.category,
-          amount: incomeDetails.amount,
-          description: incomeDetails.description,
-          time: new Date(incomeDetails.time),
-        });
-      } catch (error:any) {
-        console.error('Failed to fetch income details:', error.response?.data || error.message);
+        console.log('Fetched Expense Details:', incomeDetails);
+
+        setUpdatedIncome((prevIncome) => ({
+          ...prevIncome,
+          title: incomeDetails.title || '',
+          category: incomeDetails.category || IncomeCategories.Salary,
+          amount: incomeDetails.amount || 0,
+          description: incomeDetails.description || '',
+          time: incomeDetails.time ? new Date(incomeDetails.time) : new Date(),
+        }));
+      } catch (error: any) {
+        console.error('Failed to fetch expense details:', error.response?.data || error.message);
       }
     };
 
@@ -66,22 +82,24 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
   };
 
   const handleCategoryChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const selectedCategory = event.target.value as IncomeCategories;
+    const selectedCategory = event.target.value;
     setUpdatedIncome((prevIncome) => ({
       ...prevIncome,
-      category: selectedCategory,
+      category: selectedCategory as IncomeCategories,
     }));
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(event.target.value);
+    const selectedDate = new Date(event.target.value);
+    selectedDate.setHours(0, 0, 0, 0); // Set the time to midnight
+
     setUpdatedIncome((prevIncome) => ({
       ...prevIncome,
-      time: date,
+      time: selectedDate,
     }));
   };
 
-  const handleUpdateExpense = async () => {
+  const handleUpdateIncome = async () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
@@ -92,7 +110,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
         }
       );
       onUpdateSuccess();
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(
         'Failed to update income:',
         error.response?.data || error.message
@@ -100,6 +118,16 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
     } finally {
       onClose();
     }
+  };
+
+  const mapNumberToIncomeCategory = (categoryNumber: number): IncomeCategories => {
+    const matchingCategory = validCategories.find(
+      category => category === categoryNumber || category.toString() === categoryNumber.toString()
+    );
+
+    return matchingCategory !== undefined
+      ? (matchingCategory as IncomeCategories)
+      : IncomeCategories.Other;
   };
 
   return (
@@ -118,14 +146,14 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
           select
           label="Category"
           name="category"
-          value={updatedIncome.category}
+          value={mapNumberToIncomeCategory(updatedIncome.category)}
           onChange={handleCategoryChange}
           fullWidth
           margin="normal"
         >
-          {Object.values(IncomeCategories).map((category) => (
+          {validCategories.map((category) => (
             <MenuItem key={category} value={category}>
-              {getIncomesCategoryTitle(category as IncomeCategories)}
+              {getIncomesCategoryTitle(category)}
             </MenuItem>
           ))}
         </TextField>
@@ -168,7 +196,7 @@ const UpdateIncomeModal: React.FC<UpdateIncomeModalProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={handleUpdateExpense}
+          onClick={handleUpdateIncome}
         >
           Update
         </Button>

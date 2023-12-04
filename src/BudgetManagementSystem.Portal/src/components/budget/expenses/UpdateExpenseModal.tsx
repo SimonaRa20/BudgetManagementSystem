@@ -30,6 +30,20 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     time: new Date(),
   });
 
+  const [validCategories] = useState<ExpenseCategories[]>([
+    ExpenseCategories.Rent,
+    ExpenseCategories.Groceries,
+    ExpenseCategories.Transportation,
+    ExpenseCategories.Utilities,
+    ExpenseCategories.Entertainment,
+    ExpenseCategories.DinnerOut,
+    ExpenseCategories.Travel,
+    ExpenseCategories.Healthcare,
+    ExpenseCategories.Education,
+    ExpenseCategories.Subscription,
+    ExpenseCategories.Other,
+  ]);
+
   useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
@@ -70,23 +84,22 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
   };
 
   const handleCategoryChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const selectedCategory = event.target.value as ExpenseCategories;
+    const selectedCategory = event.target.value;
     setUpdatedExpense((prevExpense) => ({
       ...prevExpense,
-      category: selectedCategory,
+      category: selectedCategory as ExpenseCategories,
     }));
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(event.target.value);
     selectedDate.setHours(0, 0, 0, 0); // Set the time to midnight
-  
+
     setUpdatedExpense((prevExpense) => ({
       ...prevExpense,
       time: selectedDate,
     }));
   };
-  
 
   const handleUpdateExpense = async () => {
     try {
@@ -109,6 +122,16 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
     }
   };
 
+  const mapNumberToExpenseCategory = (categoryNumber: number): ExpenseCategories => {
+    const matchingCategory = validCategories.find(
+      category => category === categoryNumber || category.toString() === categoryNumber.toString()
+    );
+
+    return matchingCategory !== undefined
+      ? (matchingCategory as ExpenseCategories)
+      : ExpenseCategories.Other;
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Update Expense</DialogTitle>
@@ -125,14 +148,14 @@ const UpdateExpenseModal: React.FC<UpdateExpenseModalProps> = ({
           select
           label="Category"
           name="category"
-          value={updatedExpense.category}
+          value={mapNumberToExpenseCategory(updatedExpense.category)}
           onChange={handleCategoryChange}
           fullWidth
           margin="normal"
         >
-          {Object.values(ExpenseCategories).map((category) => (
+          {validCategories.map((category) => (
             <MenuItem key={category} value={category}>
-              {getExpensesCategoryTitle(category as ExpenseCategories)}
+              {getExpensesCategoryTitle(category)}
             </MenuItem>
           ))}
         </TextField>
